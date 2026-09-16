@@ -3,9 +3,7 @@
 
 #include <libpq-fe.h>
 
+// Function declaration
 PGconn* connectDB();
-PGconn* conn = PQconnectdb(
-    "host=localhost port=5432 dbname=faarismart user=postgres password=faaris2705"
-);
 
 #endif

@@ -1,4 +1,3 @@
-
 #include "database.h"
 #include <iostream>
 
@@ -7,7 +6,7 @@ using namespace std;
 PGconn* connectDB()
 {
     PGconn* conn = PQconnectdb(
-        "host=localhost port=5432 dbname=faarismart user=postgres password=YOUR_POSTGRES_PASSWORD"
+        "host=localhost port=5432 dbname=faarismart user=postgres password=faaris2705"
     );
 
     if (PQstatus(conn) != CONNECTION_OK)
