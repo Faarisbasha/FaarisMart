@@ -1,0 +1,569 @@
+
+/* =========================================
+   FAARISMART HOME PAGE
+   Premium Amazon + Flipkart UI
+   ========================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Poppins",sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#F4F7FB;
+    color:#1E293B;
+    overflow-x:hidden;
+    transition:.3s;
+}
+
+body.dark{
+    background:#0F172A;
+    color:white;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:15px 40px;
+
+    background:rgba(255,255,255,.75);
+    backdrop-filter:blur(18px);
+
+    border-bottom:1px solid rgba(255,255,255,.25);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+body.dark .navbar{
+    background:rgba(15,23,42,.85);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    cursor:pointer;
+}
+
+.logo img{
+    width:48px;
+    height:48px;
+    object-fit:contain;
+}
+
+.logo span{
+    color:#2563EB;
+    font-size:28px;
+    font-weight:700;
+}
+
+/* =========================
+   SEARCH BAR
+========================= */
+
+.search-box{
+    width:42%;
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    background:white;
+    padding:12px 18px;
+    border-radius:40px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+body.dark .search-box{
+    background:#1E293B;
+}
+
+.search-box i{
+    color:#2563EB;
+}
+
+.search-box input{
+    width:100%;
+    border:none;
+    outline:none;
+    background:transparent;
+    font-size:15px;
+    color:inherit;
+}
+
+/* =========================
+   NAV ICONS
+========================= */
+
+.nav-icons{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.nav-icons button{
+    width:46px;
+    height:46px;
+
+    border:none;
+    border-radius:50%;
+
+    background:white;
+
+    cursor:pointer;
+
+    position:relative;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+    transition:.3s;
+}
+
+body.dark .nav-icons button{
+    background:#1E293B;
+    color:white;
+}
+
+.nav-icons button:hover{
+    transform:translateY(-3px);
+}
+
+.cart-btn{
+    background:#2563EB !important;
+    color:white !important;
+}
+
+.logout-btn{
+    width:auto !important;
+    padding:0 18px;
+    border-radius:30px !important;
+
+    background:#EF4444 !important;
+    color:white !important;
+}
+
+.logout-btn:hover{
+    background:#DC2626 !important;
+}
+
+#cartCount{
+    position:absolute;
+    top:-4px;
+    right:-4px;
+
+    background:#EF4444;
+    color:white;
+
+    font-size:11px;
+    font-weight:600;
+
+    padding:3px 7px;
+
+    border-radius:50%;
+}
+
+/* =========================
+   HERO SECTION
+========================= */
+
+.hero{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    align-items:center;
+    gap:50px;
+
+    width:92%;
+    margin:35px auto;
+
+    background:linear-gradient(135deg,#2563EB,#1D4ED8);
+
+    border-radius:30px;
+
+    padding:55px;
+
+    color:white;
+
+    overflow:hidden;
+
+    box-shadow:0 25px 45px rgba(37,99,235,.25);
+}
+
+.hero-left h1{
+    font-size:54px;
+    margin-bottom:18px;
+}
+
+.hero-left p{
+    font-size:18px;
+    margin-bottom:30px;
+    line-height:1.7;
+}
+
+.hero-left button{
+    background:#FFD54F;
+    color:#111827;
+
+    border:none;
+
+    padding:15px 28px;
+
+    border-radius:35px;
+
+    font-size:16px;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.hero-left button:hover{
+    transform:scale(1.05);
+}
+
+.hero-right img{
+    width:100%;
+    border-radius:22px;
+    box-shadow:0 20px 40px rgba(0,0,0,.25);
+}
+
+/* =========================
+   WELCOME TEXT
+========================= */
+
+section h3{
+    font-size:22px;
+}
+
+/* =========================
+   CATEGORY BUTTONS
+========================= */
+
+.categories{
+    width:92%;
+    margin:20px auto;
+
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.categories button{
+    border:none;
+
+    background:white;
+
+    padding:12px 24px;
+
+    border-radius:35px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+    transition:.3s;
+}
+
+body.dark .categories button{
+    background:#1E293B;
+    color:white;
+}
+
+.categories button:hover{
+    background:#2563EB;
+    color:white;
+}
+
+/* =========================
+   PRODUCTS
+========================= */
+
+.products-section{
+    width:92%;
+    margin:30px auto;
+}
+
+.products-section h2{
+    font-size:34px;
+    margin-bottom:25px;
+}
+
+.products-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:28px;
+}
+
+.product-card{
+    background:white;
+
+    border-radius:24px;
+
+    padding:20px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+
+    transition:.35s;
+}
+
+body.dark .product-card{
+    background:#1E293B;
+}
+
+.product-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 20px 40px rgba(37,99,235,.18);
+}
+
+.product-card img{
+    width:170px;
+    height:170px;
+
+    object-fit:contain;
+
+    margin-bottom:18px;
+}
+
+.product-card h3{
+    font-size:18px;
+    margin-bottom:8px;
+}
+
+.price{
+    color:#2563EB;
+    font-size:24px;
+    font-weight:700;
+    margin:12px 0;
+}
+
+.rating{
+    color:#F59E0B;
+    margin-bottom:12px;
+}
+
+.product-card button{
+    width:100%;
+
+    border:none;
+
+    padding:13px;
+
+    border-radius:14px;
+
+    background:linear-gradient(135deg,#2563EB,#3B82F6);
+
+    color:white;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.product-card button:hover{
+    transform:translateY(-2px);
+}
+
+/* =========================
+   LOADER
+========================= */
+
+.loader{
+    width:55px;
+    height:55px;
+
+    border:6px solid #ddd;
+    border-top-color:#2563EB;
+
+    border-radius:50%;
+
+    animation:spin 1s linear infinite;
+
+    margin:50px auto;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* =========================
+   OFFER BANNER
+========================= */
+
+.offer-banner{
+    width:92%;
+    margin:50px auto;
+
+    background:linear-gradient(135deg,#2563EB,#1E3A8A);
+
+    border-radius:30px;
+
+    color:white;
+
+    padding:45px;
+}
+
+.offer-content{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:30px;
+}
+
+.offer-content h2{
+    font-size:34px;
+    margin-bottom:12px;
+}
+
+.offer-content p{
+    line-height:1.8;
+}
+
+.offer-content img{
+    width:220px;
+    border-radius:20px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    margin-top:60px;
+
+    background:#0F172A;
+    color:white;
+
+    padding:45px 35px;
+}
+
+.footer-content{
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:30px;
+}
+
+.footer-links{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.footer-links a{
+    color:#CBD5E1;
+    text-decoration:none;
+    transition:.3s;
+}
+
+.footer-links a:hover{
+    color:white;
+}
+
+footer hr{
+    margin:30px 0;
+    border:none;
+    border-top:1px solid rgba(255,255,255,.15);
+}
+
+.copyright{
+    text-align:center;
+    color:#94A3B8;
+}
+
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+
+.navbar{
+    flex-direction:column;
+    gap:18px;
+    padding:20px;
+}
+
+.search-box{
+    width:100%;
+}
+
+.hero{
+    grid-template-columns:1fr;
+    text-align:center;
+    padding:35px 20px;
+}
+
+.hero-left h1{
+    font-size:36px;
+}
+
+.offer-content{
+    flex-direction:column;
+    text-align:center;
+}
+
+.offer-content img{
+    width:180px;
+}
+
+.products-section h2{
+    text-align:center;
+}
+
+}
+
+@media(max-width:500px){
+
+.logo span{
+    font-size:22px;
+}
+
+.hero-left h1{
+    font-size:30px;
+}
+
+.hero-left p{
+    font-size:15px;
+}
+
+.search-box{
+    padding:10px 15px;
+}
+
+.nav-icons{
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.product-card img{
+    width:140px;
+    height:140px;
+}
+
+}

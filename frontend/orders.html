@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FaarisMart | My Orders</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Poppins",sans-serif;
+}
+
+body{
+background:#f4f7fb;
+color:#1e293b;
+}
+
+/* NAVBAR */
+
+.navbar{
+position:sticky;
+top:0;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:18px 40px;
+background:white;
+box-shadow:0 4px 15px rgba(0,0,0,.08);
+z-index:100;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+cursor:pointer;
+}
+
+.logo img{
+width:45px;
+height:45px;
+object-fit:contain;
+}
+
+.logo span{
+font-size:26px;
+font-weight:700;
+color:#2563eb;
+}
+
+.back-btn{
+background:#2563eb;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:12px;
+cursor:pointer;
+}
+
+/* MAIN */
+
+.container{
+max-width:1200px;
+margin:40px auto;
+padding:0 20px;
+}
+
+.container h1{
+margin-bottom:30px;
+}
+
+/* ORDER CARD */
+
+.order-card{
+background:white;
+border-radius:22px;
+padding:25px;
+margin-bottom:25px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.order-header{
+display:flex;
+justify-content:space-between;
+flex-wrap:wrap;
+gap:15px;
+margin-bottom:20px;
+padding-bottom:15px;
+border-bottom:1px solid #eee;
+}
+
+.status{
+background:#dcfce7;
+color:#166534;
+padding:8px 14px;
+border-radius:20px;
+font-weight:600;
+}
+
+.customer{
+line-height:1.8;
+}
+
+.order-total{
+display:flex;
+justify-content:space-between;
+font-size:20px;
+font-weight:700;
+margin-top:15px;
+}
+
+/* EMPTY */
+
+.empty{
+text-align:center;
+padding:80px 20px;
+}
+
+.empty i{
+font-size:90px;
+color:#94a3b8;
+margin-bottom:20px;
+}
+
+.empty button{
+margin-top:20px;
+padding:14px 30px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+
+@media(max-width:768px){
+
+.order-header{
+flex-direction:column;
+}
+
+.order-total{
+flex-direction:column;
+gap:10px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+<div class="logo" onclick="window.location.href='index.html'">
+
+<img src="images/logo.png">
+
+<span>FaarisMart</span>
+
+</div>
+
+<button class="back-btn"
+onclick="window.location.href='index.html'">
+
+Home
+
+</button>
+
+</nav>
+
+<div class="container">
+
+<h1><i class="fa-solid fa-box"></i> My Orders</h1>
+
+<div id="ordersContainer"></div>
+
+</div>
+
+<script>
+
+const API = "http://127.0.0.1:8080";
+
+async function loadOrders(){
+
+const container=document.getElementById("ordersContainer");
+
+try{
+
+const res=await fetch(API+"/orders");
+const orders=await res.json();
+
+if(orders.length===0){
+
+container.innerHTML=`
+<div class="empty">
+
+<i class="fa-solid fa-box-open"></i>
+
+<h2>No Orders Yet</h2>
+
+<p>Start shopping and your orders will appear here.</p>
+
+<button onclick="window.location.href='index.html'">
+
+Shop Now
+
+</button>
+
+</div>`;
+
+return;
+
+}
+
+container.innerHTML="";
+
+orders.forEach(order=>{
+
+container.innerHTML+=`
+
+<div class="order-card">
+
+<div class="order-header">
+
+<div>
+
+<div class="status">
+
+<i class="fa-solid fa-circle-check"></i>
+
+Order Placed
+
+</div>
+
+</div>
+
+<div class="customer">
+
+<strong>${order.customer_name}</strong><br>
+
+📞 ${order.phone}<br>
+
+📍 ${order.address}<br>
+
+💳 ${order.payment_method}<br>
+
+🕒 ${order.order_date}
+
+</div>
+
+</div>
+
+<div class="order-total">
+
+<span>Order Total</span>
+
+<span>₹${Number(order.total).toLocaleString("en-IN")}</span>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}catch(err){
+
+console.error(err);
+
+container.innerHTML="<h2>Backend not connected.</h2>";
+
+}
+
+}
+
+loadOrders();
+
+</script>
+
+</body>
+</html>

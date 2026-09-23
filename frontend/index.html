@@ -6,8 +6,6 @@
 
 <title>FaarisMart | Home</title>
 
-<link rel="stylesheet" href="home.css">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -15,13 +13,18 @@
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<link rel="stylesheet" href="css/home.css">
 </head>
 
 <body>
 
 <script>
-if (!localStorage.getItem("faarisUser")) {
-    window.location.href = "login.html";
+// Redirect if not logged in
+const user = localStorage.getItem("faarisUser") || sessionStorage.getItem("faarisUser");
+
+if(!user){
+    window.location.href="login.html";
 }
 </script>
 
@@ -29,48 +32,86 @@ if (!localStorage.getItem("faarisUser")) {
 
 <nav class="navbar">
 
-<div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer;">
-<img src="images/logo.png" alt="FaarisMart Logo">
+<div class="logo" onclick="window.location.href='index.html'">
+
+<img src="images/logo.png" alt="FaarisMart">
+
 <span>FaarisMart</span>
+
 </div>
 
 <div class="search-box">
+
 <i class="fa-solid fa-magnifying-glass"></i>
-<input type="text" id="searchInput" placeholder="Search products...">
+
+<input
+type="text"
+id="searchInput"
+placeholder="Search products...">
+
 </div>
 
-<div class="nav-buttons">
+<div class="nav-icons">
 
-<span id="welcomeUser"></span>
+<button id="darkToggle">
 
-<button class="cart-btn" onclick="window.location.href='cart.html'">
-<i class="fa-solid fa-cart-shopping"></i>
-Cart
+<i class="fa-solid fa-moon"></i>
+
 </button>
 
-<button class="nav-btn" onclick="logout()">
+<button onclick="window.location.href='cart.html'" class="cart-btn">
+
+<i class="fa-solid fa-cart-shopping"></i>
+
+<span id="cartCount">0</span>
+
+</button>
+
+<button onclick="window.location.href='profile.html'">
+
+<i class="fa-solid fa-user"></i>
+
+</button>
+
+<button onclick="logout()" class="logout-btn">
+
 Logout
+
 </button>
 
 </div>
 
 </nav>
 
+<!-- Welcome -->
+
+<section style="padding:20px 40px;">
+
+<h3 id="welcomeUser"></h3>
+
+</section>
+
 <!-- ================= HERO ================= -->
 
 <section class="hero">
 
-<img src="images/herobanner.jpg" alt="Hero Banner">
+<div class="hero-left">
 
-<div class="hero-text">
+<h1>Big Billion Deals</h1>
 
-<h1>Big Billion Offers</h1>
+<p>Premium Shopping Experience Inspired by Amazon & Flipkart.</p>
 
-<p>Electronics • Fashion • Accessories</p>
+<button onclick="document.querySelector('.products-section').scrollIntoView({behavior:'smooth'})">
 
-<button onclick="document.querySelector('.products').scrollIntoView({behavior:'smooth'})">
 Shop Now
+
 </button>
+
+</div>
+
+<div class="hero-right">
+
+<img src="images/herobanner.jpg" alt="Hero Banner">
 
 </div>
 
@@ -80,52 +121,26 @@ Shop Now
 
 <section class="categories">
 
-<h2>Shop by Category</h2>
-
-<div class="category-grid">
-
-<div class="category-card" onclick="filterCategory('Mobiles')">
-<img src="images/iphone15.jpg">
-<p>Mobiles</p>
-</div>
-
-<div class="category-card" onclick="filterCategory('Laptops')">
-<img src="images/hpvictus.jpg">
-<p>Laptops</p>
-</div>
-
-<div class="category-card" onclick="filterCategory('Audio')">
-<img src="images/boatearbuds.jpg">
-<p>Audio</p>
-</div>
-
-<div class="category-card" onclick="filterCategory('Fashion')">
-<img src="images/fashion.jpg">
-<p>Fashion</p>
-</div>
-
-<div class="category-card" onclick="filterCategory('Shoes')">
-<img src="images/nikeshoes.jpg">
-<p>Shoes</p>
-</div>
-
-<div class="category-card" onclick="filterCategory('Accessories')">
-<img src="images/accessories.jpg">
-<p>Accessories</p>
-</div>
-
-</div>
+<button data-category="All">All</button>
+<button data-category="Mobiles">Mobiles</button>
+<button data-category="Laptops">Laptops</button>
+<button data-category="Audio">Audio</button>
+<button data-category="Fashion">Fashion</button>
+<button data-category="Shoes">Shoes</button>
+<button data-category="Accessories">Accessories</button>
 
 </section>
 
 <!-- ================= PRODUCTS ================= -->
 
-<section class="products">
+<section class="products-section">
 
 <h2>Featured Products</h2>
 
-<div class="product-grid" id="productGrid">
-<p>Loading products...</p>
+<div id="productsContainer" class="products-grid">
+
+<div class="loader"></div>
+
 </div>
 
 </section>
@@ -138,9 +153,9 @@ Shop Now
 
 <div>
 
-<h2>Special Student Offer 🎓</h2>
+<h2>Student Special Offer 🎓</h2>
 
-<p>Get up to 20% OFF on Laptops & Accessories for College Students.</p>
+<p>Get up to 20% OFF on Laptops & Accessories.</p>
 
 </div>
 
@@ -160,7 +175,7 @@ Shop Now
 
 <h3>FaarisMart</h3>
 
-<p>Your own e-commerce platform built with C++ + PostgreSQL + HTML/CSS/JS.</p>
+<p>Built with HTML, CSS, JavaScript, C++ and PostgreSQL.</p>
 
 </div>
 
@@ -179,219 +194,234 @@ Shop Now
 <hr>
 
 <p class="copyright">
+
 © 2026 FaarisMart | Built by Faaris Basha
+
 </p>
 
 </footer>
 
+<script src="js/api.js"></script>
+
 <script>
 
-// Welcome User
-const username = localStorage.getItem("faarisUser");
-document.getElementById("welcomeUser").innerHTML =
-`<i class="fa-solid fa-user"></i> ${username}`;
+// ==========================================
+// FAARISMART HOME PAGE
+// ==========================================
 
-let allProducts = [];
+document.getElementById("welcomeUser").innerHTML=
+`Welcome back, <span style="color:#2563eb;font-weight:600;">${user}</span> 👋`;
 
-// ================= LOAD PRODUCTS =================
-async function loadProducts() {
+let allProducts=[];
 
-    const grid = document.getElementById("productGrid");
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
 
-    try {
+updateCartCount();
 
-        const response = await fetch("http://localhost:8080/products");
+// ---------------- Load Products ----------------
 
-        const products = await response.json();
+async function loadProducts(){
 
-        console.log("Products:", products);
+try{
 
-        if (products.length === 0) {
-            grid.innerHTML = "<h3>No products found in database.</h3>";
-            return;
-        }
+const products=await apiGet("/products");
 
-        allProducts = products;
+allProducts=products;
 
-        displayProducts(products);
+displayProducts(products);
 
-    } catch (err) {
+}catch(error){
 
-        console.error(err);
+console.error(error);
 
-        grid.innerHTML = "<h3 style='color:red'>Backend not connected.</h3>";
-
-    }
-} 
-
-// ================= DISPLAY PRODUCTS =================
-
-function displayProducts(products) {
-
-    const grid = document.getElementById("productGrid");
-
-    grid.innerHTML = "";
-
-    products.forEach(product => {
-
-        const card = document.createElement("div");
-
-        card.className = "product-card";
-
-        card.innerHTML = `
-        <img src="images/${product.image}" alt="${product.name}">
-        <h3>${product.name}</h3>
-        <p class="price">
-        ₹${Number(product.price).toLocaleString("en-IN")}
-        </p>
-        <button class="add-cart-btn">
-        Add to Cart
-        </button>
-        `;
-
-        card.addEventListener("click", () => {
-            window.location.href = `product.html?id=${product.id}`;
-        });
-
-        card.querySelector(".add-cart-btn").addEventListener("click", (e) => {
-
-            e.stopPropagation();
-
-            addToCart(product.id);
-
-        });
-
-        grid.appendChild(card);
-
-    });
+document.getElementById("productsContainer").innerHTML=
+"<h3 style='color:red'>Backend not connected.</h3>";
 
 }
 
-// ================= ADD TO CART =================
+}
 
-function addToCart(id) {
+// ---------------- Display Products ----------------
 
-    const product = allProducts.find(p => p.id === id);
+function displayProducts(products){
 
-    if (!product) return;
+const container=document.getElementById("productsContainer");
 
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+container.innerHTML="";
 
-    const existing = cart.find(item => item.id === id);
+if(products.length===0){
 
-    if (existing) {
-        existing.quantity = (existing.quantity || 1) + 1;
-    } else {
-        cart.push({
-            ...product,
-            quantity: 1
-        });
-    }
+container.innerHTML="<h3>No Products Found.</h3>";
 
-    localStorage.setItem("cart", JSON.stringify(cart));
-
-    alert(product.name + " added to cart!");
+return;
 
 }
 
-// ================= SEARCH =================
+products.forEach(product=>{
 
-document.getElementById("searchInput").addEventListener("input", function () {
+container.innerHTML+=`
 
-    const text = this.value.toLowerCase();
+<div class="product-card"
+onclick="openProduct(${product.id})">
 
-    const filtered = allProducts.filter(product =>
-        product.name.toLowerCase().includes(text)
-    );
+<img src="images/${product.image}">
 
-    displayProducts(filtered);
+<h3>${product.name}</h3>
+
+<div class="price">
+
+₹${Number(product.price).toLocaleString("en-IN")}
+
+</div>
+
+<div class="rating">
+
+⭐ ${product.rating}
+
+</div>
+
+<p style="font-size:13px;color:gray;">
+
+Stock: ${product.stock}
+
+</p>
+
+<button onclick="event.stopPropagation();addToCart(${product.id})">
+
+Add to Cart
+
+</button>
+
+</div>
+
+`;
 
 });
 
-// ================= CATEGORY FILTER =================
+}
 
-function filterCategory(category) {
+// ---------------- Product ----------------
 
-    let filtered = [];
+function openProduct(id){
 
-    switch (category) {
-
-        case "Mobiles":
-            filtered = allProducts.filter(p =>
-                p.name.includes("iPhone") ||
-                p.name.includes("Galaxy") ||
-                p.name.includes("OnePlus") ||
-                p.name.includes("Realme"));
-            break;
-
-        case "Laptops":
-            filtered = allProducts.filter(p =>
-                p.name.includes("HP") ||
-                p.name.includes("Lenovo") ||
-                p.name.includes("Dell") ||
-                p.name.includes("ASUS"));
-            break;
-
-        case "Audio":
-            filtered = allProducts.filter(p =>
-                p.name.includes("Boat") ||
-                p.name.includes("JBL") ||
-                p.name.includes("Sony"));
-            break;
-
-        case "Fashion":
-            filtered = allProducts.filter(p =>
-                p.name.includes("Levis") ||
-                p.name.includes("Puma Hoodie") ||
-                p.name.includes("Allen Solly") ||
-                p.name.includes("Roadster"));
-            break;
-
-        case "Shoes":
-            filtered = allProducts.filter(p =>
-                p.name.includes("Nike") ||
-                p.name.includes("Adidas") ||
-                p.name.includes("Puma Sneakers") ||
-                p.name.includes("Bata") ||
-                p.name.includes("Crocs") ||
-                p.name.includes("Woodland"));
-            break;
-
-        case "Accessories":
-            filtered = allProducts.filter(p =>
-                p.name.includes("Mouse") ||
-                p.name.includes("Keyboard") ||
-                p.name.includes("Wallet") ||
-                p.name.includes("Backpack") ||
-                p.name.includes("Pendrive") ||
-                p.name.includes("Sleeve") ||
-                p.name.includes("Watch") ||
-                p.name.includes("Band"));
-            break;
-
-        default:
-            filtered = allProducts;
-    }
-
-    displayProducts(filtered);
-
-    document.querySelector(".products").scrollIntoView({
-        behavior: "smooth"
-    });
+window.location.href=`product.html?id=${id}`;
 
 }
 
-// ================= LOGOUT =================
+// ---------------- Search ----------------
 
-function logout() {
+document.getElementById("searchInput")
+.addEventListener("input",(e)=>{
 
-    localStorage.removeItem("faarisUser");
+const value=e.target.value.toLowerCase();
 
-    window.location.href = "login.html";
+displayProducts(
+
+allProducts.filter(product=>
+
+product.name.toLowerCase().includes(value)
+
+)
+
+);
+
+});
+
+// ---------------- Categories ----------------
+
+document.querySelectorAll(".categories button").forEach(button=>{
+
+button.addEventListener("click",()=>{
+
+const category=button.dataset.category;
+
+if(category==="All"){
+
+displayProducts(allProducts);
+
+}else{
+
+displayProducts(
+
+allProducts.filter(product=>
+
+product.category===category
+
+)
+
+);
 
 }
 
-// Start
+});
+
+});
+
+// ---------------- Cart ----------------
+
+function addToCart(id){
+
+const product=allProducts.find(p=>p.id===id);
+
+const existing=cart.find(item=>item.id===id);
+
+if(existing){
+
+existing.quantity++;
+
+}else{
+
+cart.push({
+
+...product,
+
+quantity:1
+
+});
+
+}
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
+updateCartCount();
+
+alert(product.name+" added to cart!");
+
+}
+
+function updateCartCount(){
+
+document.getElementById("cartCount").innerText=
+
+cart.reduce((sum,item)=>sum+item.quantity,0);
+
+}
+
+// ---------------- Dark Mode ----------------
+
+const toggle=document.getElementById("darkToggle");
+
+toggle.addEventListener("click",()=>{
+
+document.body.classList.toggle("dark");
+
+});
+
+// ---------------- Logout ----------------
+
+function logout(){
+
+localStorage.removeItem("faarisUser");
+localStorage.removeItem("userId");
+
+sessionStorage.clear();
+
+window.location.href="login.html";
+
+}
+
+// ---------------- Start ----------------
+
 loadProducts();
 
 </script>

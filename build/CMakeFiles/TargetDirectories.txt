@@ -1,0 +1,4 @@
+C:/Users/Faaris basha/OneDrive/Desktop/Faarismart-backend/build/CMakeFiles/FaarisMart.dir
+C:/Users/Faaris basha/OneDrive/Desktop/Faarismart-backend/build/CMakeFiles/FaarisAPI.dir
+C:/Users/Faaris basha/OneDrive/Desktop/Faarismart-backend/build/CMakeFiles/edit_cache.dir
+C:/Users/Faaris basha/OneDrive/Desktop/Faarismart-backend/build/CMakeFiles/rebuild_cache.dir

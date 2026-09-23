@@ -27,7 +27,7 @@ body{
 background:#f4f7fb;
 }
 
-/* NAVBAR */
+/* Navbar */
 
 .navbar{
 background:white;
@@ -57,7 +57,22 @@ height:50px;
 object-fit:contain;
 }
 
-/* MAIN */
+.user-info{
+display:flex;
+align-items:center;
+gap:20px;
+font-weight:600;
+}
+
+.cart-count{
+background:#2563eb;
+color:white;
+padding:3px 9px;
+border-radius:50%;
+font-size:13px;
+}
+
+/* Main */
 
 .container{
 max-width:1200px;
@@ -69,8 +84,6 @@ padding:0 20px;
 margin-bottom:25px;
 }
 
-/* CART ITEM */
-
 .cart-item{
 display:flex;
 align-items:center;
@@ -80,11 +93,6 @@ padding:20px;
 border-radius:18px;
 margin-bottom:18px;
 box-shadow:0 8px 20px rgba(0,0,0,.06);
-transition:.3s;
-}
-
-.cart-item:hover{
-transform:translateY(-3px);
 }
 
 .cart-item img{
@@ -98,18 +106,12 @@ border-radius:15px;
 flex:1;
 }
 
-.info h3{
-margin-bottom:10px;
-}
-
 .price{
 font-size:22px;
 font-weight:700;
 color:#2563eb;
-margin-bottom:12px;
+margin:10px 0;
 }
-
-/* Quantity */
 
 .qty{
 display:flex;
@@ -124,21 +126,14 @@ border:none;
 border-radius:8px;
 background:#2563eb;
 color:white;
-font-size:18px;
 cursor:pointer;
-transition:.3s;
-}
-
-.qty button:hover{
-background:#1d4ed8;
+font-size:18px;
 }
 
 .qty span{
-font-weight:600;
 font-size:18px;
+font-weight:600;
 }
-
-/* Remove */
 
 .remove{
 background:#ef4444;
@@ -147,25 +142,14 @@ border:none;
 padding:12px 18px;
 border-radius:10px;
 cursor:pointer;
-transition:.3s;
 }
-
-.remove:hover{
-background:#dc2626;
-}
-
-/* SUMMARY */
 
 .summary{
 background:white;
 padding:25px;
 border-radius:20px;
-box-shadow:0 8px 20px rgba(0,0,0,.08);
 margin-top:30px;
-}
-
-.summary h2{
-margin-bottom:18px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
 }
 
 .total{
@@ -190,7 +174,6 @@ border-radius:12px;
 font-size:16px;
 font-weight:600;
 cursor:pointer;
-transition:.3s;
 }
 
 .continue{
@@ -198,20 +181,10 @@ background:#2563eb;
 color:white;
 }
 
-.continue:hover{
-background:#1d4ed8;
-}
-
 .checkout{
 background:#10b981;
 color:white;
 }
-
-.checkout:hover{
-background:#059669;
-}
-
-/* EMPTY CART */
 
 .empty{
 text-align:center;
@@ -224,22 +197,6 @@ color:#94a3b8;
 margin-bottom:20px;
 }
 
-.empty h2{
-margin-bottom:12px;
-}
-
-.empty button{
-margin-top:20px;
-padding:14px 30px;
-background:#2563eb;
-color:white;
-border:none;
-border-radius:10px;
-cursor:pointer;
-}
-
-/* Mobile */
-
 @media(max-width:768px){
 
 .cart-item{
@@ -251,20 +208,43 @@ text-align:center;
 flex-direction:column;
 }
 
+.navbar{
+padding:15px 20px;
+}
+
 }
 
 </style>
-
 </head>
+
 <body>
+
+<script>
+
+if(!localStorage.getItem("faarisUser")){
+window.location.href="login.html";
+}
+
+</script>
 
 <nav class="navbar">
 
 <div class="logo" onclick="window.location.href='index.html'">
 
-<img src="images/logo.png" alt="FaarisMart Logo">
+<img src="images/logo.png">
 
 <span>FaarisMart</span>
+
+</div>
+
+<div class="user-info">
+
+<span id="username"></span>
+
+<div>
+<i class="fa-solid fa-cart-shopping"></i>
+<span class="cart-count" id="cartCount">0</span>
+</div>
 
 </div>
 
@@ -280,16 +260,27 @@ flex-direction:column;
 
 <script>
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+document.getElementById("username").innerHTML=
+`<i class="fa-solid fa-user"></i> ${localStorage.getItem("faarisUser")}`;
 
-// Ensure every item has quantity
-cart = cart.map(item => ({
-    ...item,
-    quantity: item.quantity || 1
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+
+cart=cart.map(item=>({
+...item,
+quantity:item.quantity||1
 }));
 
 function saveCart(){
-    localStorage.setItem("cart", JSON.stringify(cart));
+localStorage.setItem("cart",JSON.stringify(cart));
+updateBadge();
+}
+
+function updateBadge(){
+
+const count=cart.reduce((sum,item)=>sum+item.quantity,0);
+
+document.getElementById("cartCount").innerText=count;
+
 }
 
 function renderCart(){
@@ -302,18 +293,15 @@ if(cart.length===0){
 
 container.innerHTML=`
 <div class="empty">
-
 <i class="fa-solid fa-cart-shopping"></i>
-
 <h2>Your Cart is Empty</h2>
-
-<p>Add some products to continue shopping.</p>
-
-<button onclick="window.location.href='index.html'">
+<p>Add products to continue shopping.</p>
+<button class="continue" onclick="window.location.href='index.html'">
 Continue Shopping
 </button>
-
 </div>`;
+
+updateBadge();
 
 return;
 
@@ -323,19 +311,20 @@ let total=0;
 
 cart.forEach((item,index)=>{
 
-total+=Number(item.price)*item.quantity;
+total+=item.price*item.quantity;
 
 container.innerHTML+=`
-
 <div class="cart-item">
 
-<img src="images/${item.image}" alt="${item.name}">
+<img src="images/${item.image}">
 
 <div class="info">
 
 <h3>${item.name}</h3>
 
-<p class="price">₹${Number(item.price).toLocaleString("en-IN")}</p>
+<div class="price">
+₹${item.price.toLocaleString("en-IN")}
+</div>
 
 <div class="qty">
 
@@ -350,9 +339,7 @@ container.innerHTML+=`
 </div>
 
 <button class="remove" onclick="removeItem(${index})">
-
 <i class="fa-solid fa-trash"></i> Remove
-
 </button>
 
 </div>`;
@@ -360,7 +347,6 @@ container.innerHTML+=`
 });
 
 container.innerHTML+=`
-
 <div class="summary">
 
 <h2>Order Summary</h2>
@@ -375,17 +361,21 @@ container.innerHTML+=`
 
 <div class="actions">
 
-<button class="continue" onclick="window.location.href='index.html'">
+<button class="continue"
+onclick="window.location.href='index.html'">
 Continue Shopping
 </button>
 
-<button class="checkout" onclick="checkout()">
+<button class="checkout"
+onclick="checkout()">
 Checkout
 </button>
 
 </div>
 
 </div>`;
+
+updateBadge();
 
 }
 
@@ -394,10 +384,13 @@ function changeQty(index,change){
 cart[index].quantity+=change;
 
 if(cart[index].quantity<=0){
+
 cart.splice(index,1);
+
 }
 
 saveCart();
+
 renderCart();
 
 }
@@ -414,7 +407,6 @@ renderCart();
 
 function checkout(){
 
-// Open Checkout Page
 window.location.href="checkout.html";
 
 }
