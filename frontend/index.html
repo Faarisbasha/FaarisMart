@@ -4,47 +4,55 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>FaarisMart - Home</title>
+<title>FaarisMart | Home</title>
 
-<!-- Home Page CSS -->
 <link rel="stylesheet" href="home.css">
 
-<!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- Font Awesome -->
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
 </head>
 
 <body>
+
+<script>
+if (!localStorage.getItem("faarisUser")) {
+    window.location.href = "login.html";
+}
+</script>
 
 <!-- ================= NAVBAR ================= -->
 
 <nav class="navbar">
 
-    <div class="logo">
-        <img src="images/logo.jpg" alt="FaarisMart Logo">
-        <span>FaarisMart</span>
-    </div>
+<div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer;">
+<img src="images/logo.png" alt="FaarisMart Logo">
+<span>FaarisMart</span>
+</div>
 
-    <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Search products...">
-    </div>
+<div class="search-box">
+<i class="fa-solid fa-magnifying-glass"></i>
+<input type="text" id="searchInput" placeholder="Search products...">
+</div>
 
-    <div class="nav-buttons">
-        <a href="login.html" class="nav-btn">Login</a>
+<div class="nav-buttons">
 
-        <button class="cart-btn">
-            <i class="fa-solid fa-cart-shopping"></i>
-            Cart
-        </button>
-    </div>
+<span id="welcomeUser"></span>
+
+<button class="cart-btn" onclick="window.location.href='cart.html'">
+<i class="fa-solid fa-cart-shopping"></i>
+Cart
+</button>
+
+<button class="nav-btn" onclick="logout()">
+Logout
+</button>
+
+</div>
 
 </nav>
 
@@ -52,13 +60,19 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <section class="hero">
 
-    <img src="images/herobanner.jpg" alt="Big Billion Banner">
+<img src="images/herobanner.jpg" alt="Hero Banner">
 
-    <div class="hero-text">
-        <h1>Big Billion Offers</h1>
-        <p>Electronics • Fashion • Accessories</p>
-        <button>Shop Now</button>
-    </div>
+<div class="hero-text">
+
+<h1>Big Billion Offers</h1>
+
+<p>Electronics • Fashion • Accessories</p>
+
+<button onclick="document.querySelector('.products').scrollIntoView({behavior:'smooth'})">
+Shop Now
+</button>
+
+</div>
 
 </section>
 
@@ -66,110 +80,73 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <section class="categories">
 
-    <h2>Shop by Category</h2>
+<h2>Shop by Category</h2>
 
-    <div class="category-grid">
+<div class="category-grid">
 
-        <div class="category-card">
-            <img src="images/iphone15.jpg" alt="Mobiles">
-            <p>Mobiles</p>
-        </div>
+<div class="category-card" onclick="filterCategory('Mobiles')">
+<img src="images/iphone15.jpg">
+<p>Mobiles</p>
+</div>
 
-        <div class="category-card">
-            <img src="images/hpvictus.jpg" alt="Laptops">
-            <p>Laptops</p>
-        </div>
+<div class="category-card" onclick="filterCategory('Laptops')">
+<img src="images/hpvictus.jpg">
+<p>Laptops</p>
+</div>
 
-        <div class="category-card">
-            <img src="images/boatearbuds.jpg" alt="Audio">
-            <p>Audio</p>
-        </div>
+<div class="category-card" onclick="filterCategory('Audio')">
+<img src="images/boatearbuds.jpg">
+<p>Audio</p>
+</div>
 
-        <div class="category-card">
-            <img src="images/fashion.jpg" alt="Fashion">
-            <p>Fashion</p>
-        </div>
+<div class="category-card" onclick="filterCategory('Fashion')">
+<img src="images/fashion.jpg">
+<p>Fashion</p>
+</div>
 
-        <div class="category-card">
-            <img src="images/nikeshoes.jpg" alt="Shoes">
-            <p>Shoes</p>
-        </div>
+<div class="category-card" onclick="filterCategory('Shoes')">
+<img src="images/nikeshoes.jpg">
+<p>Shoes</p>
+</div>
 
-        <div class="category-card">
-            <img src="images/accessories.jpg" alt="Accessories">
-            <p>Accessories</p>
-        </div>
+<div class="category-card" onclick="filterCategory('Accessories')">
+<img src="images/accessories.jpg">
+<p>Accessories</p>
+</div>
 
-    </div>
+</div>
 
 </section>
 
-<!-- ================= FEATURED PRODUCTS ================= -->
+<!-- ================= PRODUCTS ================= -->
 
 <section class="products">
 
-    <h2>Featured Products</h2>
+<h2>Featured Products</h2>
 
-    <div class="product-grid">
-
-        <div class="product-card">
-            <img src="images/iphone15.jpg" alt="iPhone 15">
-            <h3>iPhone 15</h3>
-            <p class="price">₹79,999</p>
-            <button>Add to Cart</button>
-        </div>
-
-        <div class="product-card">
-            <img src="images/galaxys24.jpg" alt="Samsung Galaxy S24">
-            <h3>Samsung Galaxy S24</h3>
-            <p class="price">₹74,999</p>
-            <button>Add to Cart</button>
-        </div>
-
-        <div class="product-card">
-            <img src="images/oneplus13.jpg" alt="OnePlus 13">
-            <h3>OnePlus 13</h3>
-            <p class="price">₹69,999</p>
-            <button>Add to Cart</button>
-        </div>
-
-        <div class="product-card">
-            <img src="images/hpvictus.jpg" alt="HP Victus">
-            <h3>HP Victus</h3>
-            <p class="price">₹74,999</p>
-            <button>Add to Cart</button>
-        </div>
-
-        <div class="product-card">
-            <img src="images/boatearbuds.jpg" alt="Boat Earbuds">
-            <h3>Boat Earbuds</h3>
-            <p class="price">₹1,499</p>
-            <button>Add to Cart</button>
-        </div>
-
-        <div class="product-card">
-            <img src="images/nikeshoes.jpg" alt="Nike Shoes">
-            <h3>Nike Shoes</h3>
-            <p class="price">₹3,999</p>
-            <button>Add to Cart</button>
-        </div>
-
-    </div>
+<div class="product-grid" id="productGrid">
+<p>Loading products...</p>
+</div>
 
 </section>
 
-<!-- ================= SPECIAL OFFER ================= -->
+<!-- ================= STUDENT OFFER ================= -->
 
 <section class="offer-banner">
 
-    <div class="offer-content">
-        <div>
-            <h2>Special Student Offer 🎓</h2>
-            <p>Get up to 20% OFF on Laptops & Accessories for College Students.</p>
-        </div>
+<div class="offer-content">
 
-        <img src="images/cartillustration.jpg" alt="Shopping Illustration">
-    </div>
+<div>
+
+<h2>Special Student Offer 🎓</h2>
+
+<p>Get up to 20% OFF on Laptops & Accessories for College Students.</p>
+
+</div>
+
+<img src="images/cartillustration.jpg">
+
+</div>
 
 </section>
 
@@ -177,29 +154,247 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <footer>
 
-    <div class="footer-content">
+<div class="footer-content">
 
-        <div>
-            <h3>FaarisMart</h3>
-            <p>Your own e-commerce platform built with C++ + PostgreSQL + HTML/CSS/JS.</p>
-        </div>
+<div>
 
-        <div class="footer-links">
-            <a href="#"><i class="fa-brands fa-github"></i> GitHub</a>
-            <a href="#"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
-            <a href="#"><i class="fa-solid fa-envelope"></i> Contact</a>
-        </div>
+<h3>FaarisMart</h3>
 
-    </div>
+<p>Your own e-commerce platform built with C++ + PostgreSQL + HTML/CSS/JS.</p>
 
-    <hr>
+</div>
 
-    <p class="copyright">© 2026 FaarisMart | Built by Faaris Basha</p>
+<div class="footer-links">
+
+<a href="#"><i class="fa-brands fa-github"></i> GitHub</a>
+
+<a href="#"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+
+<a href="#"><i class="fa-solid fa-envelope"></i> Contact</a>
+
+</div>
+
+</div>
+
+<hr>
+
+<p class="copyright">
+© 2026 FaarisMart | Built by Faaris Basha
+</p>
 
 </footer>
 
-<!-- JavaScript -->
-<script src="app.js"></script>
+<script>
+
+// Welcome User
+const username = localStorage.getItem("faarisUser");
+document.getElementById("welcomeUser").innerHTML =
+`<i class="fa-solid fa-user"></i> ${username}`;
+
+let allProducts = [];
+
+// ================= LOAD PRODUCTS =================
+async function loadProducts() {
+
+    const grid = document.getElementById("productGrid");
+
+    try {
+
+        const response = await fetch("http://localhost:8080/products");
+
+        const products = await response.json();
+
+        console.log("Products:", products);
+
+        if (products.length === 0) {
+            grid.innerHTML = "<h3>No products found in database.</h3>";
+            return;
+        }
+
+        allProducts = products;
+
+        displayProducts(products);
+
+    } catch (err) {
+
+        console.error(err);
+
+        grid.innerHTML = "<h3 style='color:red'>Backend not connected.</h3>";
+
+    }
+} 
+
+// ================= DISPLAY PRODUCTS =================
+
+function displayProducts(products) {
+
+    const grid = document.getElementById("productGrid");
+
+    grid.innerHTML = "";
+
+    products.forEach(product => {
+
+        const card = document.createElement("div");
+
+        card.className = "product-card";
+
+        card.innerHTML = `
+        <img src="images/${product.image}" alt="${product.name}">
+        <h3>${product.name}</h3>
+        <p class="price">
+        ₹${Number(product.price).toLocaleString("en-IN")}
+        </p>
+        <button class="add-cart-btn">
+        Add to Cart
+        </button>
+        `;
+
+        card.addEventListener("click", () => {
+            window.location.href = `product.html?id=${product.id}`;
+        });
+
+        card.querySelector(".add-cart-btn").addEventListener("click", (e) => {
+
+            e.stopPropagation();
+
+            addToCart(product.id);
+
+        });
+
+        grid.appendChild(card);
+
+    });
+
+}
+
+// ================= ADD TO CART =================
+
+function addToCart(id) {
+
+    const product = allProducts.find(p => p.id === id);
+
+    if (!product) return;
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const existing = cart.find(item => item.id === id);
+
+    if (existing) {
+        existing.quantity = (existing.quantity || 1) + 1;
+    } else {
+        cart.push({
+            ...product,
+            quantity: 1
+        });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    alert(product.name + " added to cart!");
+
+}
+
+// ================= SEARCH =================
+
+document.getElementById("searchInput").addEventListener("input", function () {
+
+    const text = this.value.toLowerCase();
+
+    const filtered = allProducts.filter(product =>
+        product.name.toLowerCase().includes(text)
+    );
+
+    displayProducts(filtered);
+
+});
+
+// ================= CATEGORY FILTER =================
+
+function filterCategory(category) {
+
+    let filtered = [];
+
+    switch (category) {
+
+        case "Mobiles":
+            filtered = allProducts.filter(p =>
+                p.name.includes("iPhone") ||
+                p.name.includes("Galaxy") ||
+                p.name.includes("OnePlus") ||
+                p.name.includes("Realme"));
+            break;
+
+        case "Laptops":
+            filtered = allProducts.filter(p =>
+                p.name.includes("HP") ||
+                p.name.includes("Lenovo") ||
+                p.name.includes("Dell") ||
+                p.name.includes("ASUS"));
+            break;
+
+        case "Audio":
+            filtered = allProducts.filter(p =>
+                p.name.includes("Boat") ||
+                p.name.includes("JBL") ||
+                p.name.includes("Sony"));
+            break;
+
+        case "Fashion":
+            filtered = allProducts.filter(p =>
+                p.name.includes("Levis") ||
+                p.name.includes("Puma Hoodie") ||
+                p.name.includes("Allen Solly") ||
+                p.name.includes("Roadster"));
+            break;
+
+        case "Shoes":
+            filtered = allProducts.filter(p =>
+                p.name.includes("Nike") ||
+                p.name.includes("Adidas") ||
+                p.name.includes("Puma Sneakers") ||
+                p.name.includes("Bata") ||
+                p.name.includes("Crocs") ||
+                p.name.includes("Woodland"));
+            break;
+
+        case "Accessories":
+            filtered = allProducts.filter(p =>
+                p.name.includes("Mouse") ||
+                p.name.includes("Keyboard") ||
+                p.name.includes("Wallet") ||
+                p.name.includes("Backpack") ||
+                p.name.includes("Pendrive") ||
+                p.name.includes("Sleeve") ||
+                p.name.includes("Watch") ||
+                p.name.includes("Band"));
+            break;
+
+        default:
+            filtered = allProducts;
+    }
+
+    displayProducts(filtered);
+
+    document.querySelector(".products").scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
+
+// ================= LOGOUT =================
+
+function logout() {
+
+    localStorage.removeItem("faarisUser");
+
+    window.location.href = "login.html";
+
+}
+
+// Start
+loadProducts();
+
+</script>
 
 </body>
 </html>

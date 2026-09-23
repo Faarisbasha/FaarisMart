@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FaarisMart | Product Details</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Poppins",sans-serif;
+}
+
+body{
+background:#f5f7fb;
+color:#222;
+}
+
+/* NAVBAR */
+
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:18px 50px;
+background:white;
+box-shadow:0 2px 12px rgba(0,0,0,.08);
+position:sticky;
+top:0;
+z-index:100;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:12px;
+font-size:24px;
+font-weight:700;
+color:#2563eb;
+cursor:pointer;
+}
+
+.logo img{
+width:50px;
+height:50px;
+object-fit:contain;
+}
+
+/* MAIN */
+
+.container{
+max-width:1200px;
+margin:50px auto;
+padding:0 20px;
+}
+
+.product{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:50px;
+background:white;
+border-radius:25px;
+padding:35px;
+box-shadow:0 10px 35px rgba(0,0,0,.08);
+}
+
+/* IMAGE */
+
+.image-box{
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.image-box img{
+width:100%;
+max-width:430px;
+border-radius:20px;
+transition:.3s;
+}
+
+.image-box img:hover{
+transform:scale(1.05);
+}
+
+/* DETAILS */
+
+.details h1{
+font-size:38px;
+margin-bottom:15px;
+}
+
+.price{
+font-size:34px;
+font-weight:700;
+color:#2563eb;
+margin-bottom:15px;
+}
+
+.rating{
+color:#f59e0b;
+margin-bottom:20px;
+font-size:18px;
+}
+
+.desc{
+line-height:1.8;
+color:#555;
+margin-bottom:25px;
+}
+
+/* QUANTITY */
+
+.quantity-box{
+display:flex;
+align-items:center;
+gap:15px;
+margin-bottom:25px;
+}
+
+.quantity-box button{
+width:40px;
+height:40px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+font-size:20px;
+cursor:pointer;
+}
+
+.quantity-box span{
+font-size:20px;
+font-weight:600;
+min-width:30px;
+text-align:center;
+}
+
+/* SPECS */
+
+.specs{
+background:#f8fafc;
+padding:18px;
+border-radius:15px;
+margin-bottom:30px;
+}
+
+.specs h3{
+margin-bottom:12px;
+}
+
+.specs ul{
+padding-left:20px;
+}
+
+.specs li{
+margin:8px 0;
+}
+
+/* BUTTONS */
+
+.buttons{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.buttons button{
+border:none;
+cursor:pointer;
+padding:15px 30px;
+border-radius:12px;
+font-size:16px;
+font-weight:600;
+transition:.3s;
+}
+
+.add{
+background:#2563eb;
+color:white;
+}
+
+.add:hover{
+background:#1d4ed8;
+transform:translateY(-3px);
+}
+
+.buy{
+background:#10b981;
+color:white;
+}
+
+.buy:hover{
+background:#059669;
+transform:translateY(-3px);
+}
+
+.back{
+background:#e5e7eb;
+}
+
+.back:hover{
+background:#d1d5db;
+}
+
+@media(max-width:900px){
+
+.product{
+grid-template-columns:1fr;
+text-align:center;
+}
+
+.buttons{
+justify-content:center;
+}
+
+.quantity-box{
+justify-content:center;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+<div class="logo" onclick="window.location.href='index.html'">
+
+<img src="images/logo.png" alt="FaarisMart Logo">
+
+<span>FaarisMart</span>
+
+</div>
+
+</nav>
+
+<div class="container">
+
+<div class="product">
+
+<div class="image-box">
+
+<img id="productImage" alt="Product Image">
+
+</div>
+
+<div class="details">
+
+<h1 id="productName">Loading...</h1>
+
+<div class="price" id="productPrice"></div>
+
+<div class="rating">
+★★★★★ (4.8)
+</div>
+
+<p class="desc" id="productDesc"></p>
+
+<div class="quantity-box">
+
+<button onclick="changeQty(-1)">−</button>
+
+<span id="qty">1</span>
+
+<button onclick="changeQty(1)">+</button>
+
+</div>
+
+<div class="specs">
+
+<h3>Specifications</h3>
+
+<ul>
+<li>Original Product</li>
+<li>1 Year Warranty</li>
+<li>Fast Delivery</li>
+<li>Secure Packaging</li>
+<li>Easy Return Policy</li>
+</ul>
+
+</div>
+
+<div class="buttons">
+
+<button class="add" onclick="addToCart()">
+
+<i class="fa-solid fa-cart-plus"></i>
+
+Add to Cart
+
+</button>
+
+<button class="buy" onclick="buyNow()">
+
+<i class="fa-solid fa-bolt"></i>
+
+Buy Now
+
+</button>
+
+<button class="back" onclick="window.location.href='index.html'">
+
+Back
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const params=new URLSearchParams(window.location.search);
+const productId=Number(params.get("id"));
+
+let product=null;
+let quantity=1;
+
+const descriptions={
+"iPhone 15":"Apple A16 Bionic chip with Super Retina XDR display.",
+"Samsung Galaxy S24":"Galaxy AI with powerful flagship performance.",
+"OnePlus 13":"Fast charging flagship with premium performance.",
+"HP Victus":"Gaming laptop with Ryzen processor and RTX graphics.",
+"Boat Earbuds":"Wireless earbuds with long battery life."
+};
+
+async function loadProduct(){
+
+try{
+
+const res=await fetch("http://localhost:8080/products");
+
+const products=await res.json();
+
+product=products.find(p=>p.id===productId);
+
+if(!product){
+
+window.location.href="index.html";
+return;
+
+}
+
+document.getElementById("productImage").src="images/"+product.image;
+document.getElementById("productName").innerText=product.name;
+document.getElementById("productPrice").innerText=
+"₹"+Number(product.price).toLocaleString("en-IN");
+
+document.getElementById("productDesc").innerText=
+descriptions[product.name] ||
+"Premium quality product from FaarisMart with fast delivery and secure packaging.";
+
+}catch(e){
+
+alert("Failed to load product.");
+
+}
+
+}
+
+function changeQty(change){
+
+quantity+=change;
+
+if(quantity<1) quantity=1;
+
+document.getElementById("qty").innerText=quantity;
+
+}
+
+function addToCart(){
+
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+
+const existing=cart.find(item=>item.id===product.id);
+
+if(existing){
+
+existing.quantity+=quantity;
+
+}else{
+
+cart.push({...product,quantity});
+
+}
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
+alert(quantity+" × "+product.name+" added to cart!");
+
+}
+
+function buyNow(){
+
+addToCart();
+
+window.location.href="checkout.html";
+
+}
+
+loadProduct();
+
+</script>
+
+</body>
+</html>

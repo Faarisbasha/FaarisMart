@@ -1,275 +1,282 @@
-/* ==============================
-   FAARISMART PREMIUM LOGIN
-   Compact Glassmorphism
-============================== */
-
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
 }
 
 body{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:linear-gradient(135deg,#081224,#123A8F,#2563EB);
-    overflow:hidden;
-    position:relative;
+
+min-height:100vh;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+background:linear-gradient(135deg,#081224,#123A8F,#2563EB);
+
+overflow:hidden;
+position:relative;
+
 }
 
-/* Floating Glow */
-
 .bg-circle{
-    position:absolute;
-    border-radius:50%;
-    filter:blur(80px);
-    opacity:.35;
+
+position:absolute;
+border-radius:50%;
+filter:blur(90px);
+opacity:.35;
+
 }
 
 .circle1{
-    width:250px;
-    height:250px;
-    background:#3B82F6;
-    top:-80px;
-    left:-80px;
+
+width:260px;
+height:260px;
+
+background:#3B82F6;
+
+top:-80px;
+left:-80px;
+
 }
 
 .circle2{
-    width:220px;
-    height:220px;
-    background:#8B5CF6;
-    bottom:-60px;
-    right:-60px;
+
+width:240px;
+height:240px;
+
+background:#8B5CF6;
+
+bottom:-60px;
+right:-60px;
+
 }
 
 .circle3{
-    width:120px;
-    height:120px;
-    background:#22D3EE;
-    top:25%;
-    right:18%;
-}
 
-/* Login Card */
+width:140px;
+height:140px;
+
+background:#22D3EE;
+
+top:30%;
+right:15%;
+
+}
 
 .login-card{
 
-    width:400px;
-    padding:30px;
+width:430px;
 
-    border-radius:24px;
+padding:35px;
 
-    background:rgba(255,255,255,.12);
-    backdrop-filter:blur(24px);
-    -webkit-backdrop-filter:blur(24px);
+border-radius:28px;
 
-    border:1px solid rgba(255,255,255,.18);
+background:rgba(255,255,255,.12);
 
-    box-shadow:
-    0 25px 50px rgba(0,0,0,.35),
-    inset 0 1px 1px rgba(255,255,255,.12);
+backdrop-filter:blur(22px);
 
-    text-align:center;
+border:1px solid rgba(255,255,255,.2);
+
+box-shadow:
+0 25px 60px rgba(0,0,0,.35);
+
+text-align:center;
+
 }
-
-/* Hide Left Panel */
-
-.left-panel{
-    display:none;
-}
-
-/* Logo */
 
 .logo{
-    width:60px;
-    height:60px;
-    object-fit:cover;
-    border-radius:50%;
-    margin-bottom:12px;
+
+width:120px;
+height:120px;
+
+object-fit:contain;
+
+margin-bottom:15px;
+
 }
 
-.login-card h1{
-    color:white;
-    font-size:2rem;
-    margin-bottom:6px;
+h1{
+
+color:white;
+font-size:2.3rem;
+
 }
 
 .subtitle{
-    color:#D6E3FF;
-    margin-bottom:18px;
-    font-size:14px;
+
+color:#dbeafe;
+
+margin:8px 0 25px;
+
 }
-
-/* Small Illustration */
-
-.cart-image{
-    width:100px;
-    height:100px;
-    object-fit:contain;
-    margin:0 auto 18px;
-    animation:float 3s ease-in-out infinite;
-}
-
-@keyframes float{
-    50%{
-        transform:translateY(-6px);
-    }
-}
-
-/* Inputs */
 
 .input-box{
 
-    display:flex;
-    align-items:center;
+display:flex;
+align-items:center;
 
-    background:rgba(255,255,255,.95);
+background:white;
 
-    border-radius:14px;
+border-radius:15px;
 
-    padding:13px 15px;
-    margin-bottom:14px;
+padding:14px;
 
-    transition:.3s;
-}
-
-.input-box:focus-within{
-
-    box-shadow:
-    0 0 18px rgba(59,130,246,.45);
+margin-bottom:18px;
 
 }
 
 .input-box i{
-    color:#2563EB;
-    margin-right:10px;
+
+color:#2563EB;
+margin-right:10px;
+
 }
 
 .input-box input{
-    border:none;
-    outline:none;
-    width:100%;
-    font-size:15px;
+
+width:100%;
+
+border:none;
+outline:none;
+
+font-size:15px;
+
 }
 
 #togglePassword{
-    cursor:pointer;
-    color:#2563EB;
+
+cursor:pointer;
+
 }
-
-/* Remember */
-
-.options{
-
-    display:flex;
-    justify-content:space-between;
-
-    color:white;
-    font-size:13px;
-
-    margin-bottom:18px;
-}
-
-.options a{
-    color:#FFD54F;
-    text-decoration:none;
-}
-
-/* Login Button */
 
 .login-btn{
 
-    width:100%;
+width:100%;
 
-    padding:13px;
+padding:14px;
 
-    border:none;
-    border-radius:14px;
+border:none;
+border-radius:15px;
 
-    background:linear-gradient(135deg,#2563EB,#4F8CFF);
+background:linear-gradient(135deg,#2563EB,#4F8CFF);
 
-    color:white;
-    font-size:15px;
-    font-weight:600;
+color:white;
 
-    cursor:pointer;
-    transition:.3s;
+font-size:16px;
+font-weight:600;
+
+cursor:pointer;
+
+transition:.3s;
+
 }
 
 .login-btn:hover{
 
-    transform:translateY(-2px);
-    box-shadow:0 12px 25px rgba(37,99,235,.45);
+transform:translateY(-3px);
 
 }
 
-/* Divider */
+.options{
+
+display:flex;
+justify-content:space-between;
+
+font-size:13px;
+
+color:white;
+
+margin-bottom:20px;
+
+}
+
+.options a{
+
+color:#FFD54F;
+
+text-decoration:none;
+
+}
 
 .divider{
 
-    display:flex;
-    align-items:center;
+display:flex;
+align-items:center;
 
-    margin:18px 0;
+margin:22px 0;
 
-    color:#D6E3FF;
+color:white;
+
 }
 
 .divider::before,
 .divider::after{
 
-    content:"";
-    flex:1;
-    height:1px;
-    background:rgba(255,255,255,.2);
+content:"";
+
+flex:1;
+
+height:1px;
+
+background:rgba(255,255,255,.25);
 
 }
 
 .divider span{
-    padding:0 10px;
-}
 
-/* Google Button */
+padding:0 12px;
+
+}
 
 .google-btn{
 
-    width:100%;
-    padding:12px;
+width:100%;
 
-    border:none;
-    border-radius:14px;
+padding:13px;
 
-    background:white;
-    color:#111827;
+border:none;
+border-radius:15px;
 
-    font-weight:600;
-    cursor:pointer;
+background:white;
+
+font-weight:600;
+
+cursor:pointer;
+
 }
 
-/* Register */
-
 .register{
-    margin-top:18px;
-    color:white;
-    font-size:14px;
+
+margin-top:20px;
+
+color:white;
+
 }
 
 .register a{
-    color:#FFD54F;
-    text-decoration:none;
-}
 
-/* Mobile */
+color:#FFD54F;
+
+text-decoration:none;
+
+}
 
 @media(max-width:480px){
 
 .login-card{
 
-    width:92%;
-    padding:24px;
+width:92%;
+
+padding:25px;
+
+}
+
+.logo{
+
+width:95px;
+height:95px;
 
 }
 

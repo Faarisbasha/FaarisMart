@@ -1,0 +1,371 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FaarisMart | Checkout</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Poppins",sans-serif;
+}
+
+body{
+background:#f4f7fb;
+}
+
+/* Navbar */
+
+.navbar{
+background:white;
+padding:18px 40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 3px 15px rgba(0,0,0,.08);
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:12px;
+font-size:26px;
+font-weight:700;
+color:#2563eb;
+cursor:pointer;
+}
+
+.logo img{
+width:45px;
+height:45px;
+object-fit:contain;
+}
+
+.container{
+max-width:1200px;
+margin:40px auto;
+padding:20px;
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:30px;
+}
+
+/* Cards */
+
+.card{
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.card h2{
+margin-bottom:20px;
+color:#1e293b;
+}
+
+/* Form */
+
+.input-group{
+margin-bottom:18px;
+}
+
+.input-group label{
+display:block;
+margin-bottom:8px;
+font-weight:600;
+}
+
+.input-group input,
+.input-group textarea{
+width:100%;
+padding:14px;
+border:1px solid #d1d5db;
+border-radius:12px;
+outline:none;
+font-size:15px;
+}
+
+.input-group input:focus,
+.input-group textarea:focus{
+border-color:#2563eb;
+}
+
+/* Payment */
+
+.payment-option{
+display:flex;
+align-items:center;
+gap:10px;
+padding:14px;
+border:1px solid #d1d5db;
+border-radius:12px;
+margin-bottom:12px;
+cursor:pointer;
+}
+
+.payment-option:hover{
+border-color:#2563eb;
+}
+
+/* Order Summary */
+
+.order-item{
+display:flex;
+justify-content:space-between;
+margin-bottom:12px;
+}
+
+.total{
+display:flex;
+justify-content:space-between;
+font-size:24px;
+font-weight:700;
+margin-top:20px;
+padding-top:20px;
+border-top:1px solid #ddd;
+}
+
+.place-order{
+width:100%;
+margin-top:25px;
+padding:15px;
+border:none;
+border-radius:14px;
+background:linear-gradient(135deg,#2563eb,#4f8cff);
+color:white;
+font-size:17px;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
+}
+
+.place-order:hover{
+transform:translateY(-2px);
+box-shadow:0 12px 25px rgba(37,99,235,.35);
+}
+
+/* Success Popup */
+
+.popup{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.5);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+.popup-content{
+background:white;
+padding:35px;
+border-radius:20px;
+text-align:center;
+width:340px;
+}
+
+.popup-content i{
+font-size:60px;
+color:#10b981;
+margin-bottom:15px;
+}
+
+.popup-content button{
+margin-top:20px;
+padding:12px 25px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+@media(max-width:900px){
+.container{
+grid-template-columns:1fr;
+}
+}
+
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+
+<nav class="navbar">
+
+<div class="logo" onclick="window.location.href='index.html'">
+<img src="images/logo.png" alt="Logo">
+<span>FaarisMart</span>
+</div>
+
+</nav>
+
+<div class="container">
+
+<!-- Left -->
+
+<div class="card">
+
+<h2><i class="fa-solid fa-location-dot"></i> Delivery Address</h2>
+
+<form id="checkoutForm">
+
+<div class="input-group">
+<label>Full Name</label>
+<input type="text" id="name" required>
+</div>
+
+<div class="input-group">
+<label>Phone Number</label>
+<input type="tel" id="phone" required>
+</div>
+
+<div class="input-group">
+<label>Address</label>
+<textarea id="address" rows="4" required></textarea>
+</div>
+
+<div class="input-group">
+<label>City</label>
+<input type="text" id="city" required>
+</div>
+
+<div class="input-group">
+<label>Pincode</label>
+<input type="text" id="pincode" required>
+</div>
+
+<h2 style="margin-top:25px;">
+<i class="fa-solid fa-wallet"></i> Payment Method
+</h2>
+
+<label class="payment-option">
+<input type="radio" name="payment" value="UPI" checked>
+UPI
+</label>
+
+<label class="payment-option">
+<input type="radio" name="payment" value="Card">
+Debit / Credit Card
+</label>
+
+<label class="payment-option">
+<input type="radio" name="payment" value="COD">
+Cash on Delivery
+</label>
+
+<button type="submit" class="place-order">
+Place Order
+</button>
+
+</form>
+
+</div>
+
+<!-- Right -->
+
+<div class="card">
+
+<h2><i class="fa-solid fa-receipt"></i> Order Summary</h2>
+
+<div id="orderItems"></div>
+
+<div class="total">
+<span>Total</span>
+<span id="totalPrice">₹0</span>
+</div>
+
+</div>
+
+</div>
+
+<!-- Success Popup -->
+
+<div class="popup" id="popup">
+
+<div class="popup-content">
+
+<i class="fa-solid fa-circle-check"></i>
+
+<h2>Order Placed!</h2>
+
+<p>Thank you for shopping with FaarisMart.</p>
+
+<button onclick="goHome()">
+Continue Shopping
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+
+const orderItems=document.getElementById("orderItems");
+
+let total=0;
+
+cart.forEach(item=>{
+
+const qty=item.quantity||1;
+
+total+=Number(item.price)*qty;
+
+orderItems.innerHTML+=`
+<div class="order-item">
+<span>${item.name} × ${qty}</span>
+<span>₹${(item.price*qty).toLocaleString("en-IN")}</span>
+</div>`;
+
+});
+
+document.getElementById("totalPrice").innerText=
+"₹"+total.toLocaleString("en-IN");
+
+document.getElementById("checkoutForm").addEventListener("submit",function(e){
+
+e.preventDefault();
+
+if(cart.length===0){
+
+alert("Your cart is empty!");
+
+return;
+
+}
+
+document.getElementById("popup").style.display="flex";
+
+localStorage.removeItem("cart");
+
+});
+
+function goHome(){
+
+window.location.href="index.html";
+
+}
+
+</script>
+
+</body>
+</html>

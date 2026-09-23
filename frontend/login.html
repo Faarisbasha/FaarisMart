@@ -4,98 +4,117 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>FaarisMart | Premium Login</title>
+<title>FaarisMart | Login</title>
 
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/style.css">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 </head>
+
 <body>
 
-<div class="bg circle1"></div>
-<div class="bg circle2"></div>
-<div class="bg circle3"></div>
+<div class="bg-circle circle1"></div>
+<div class="bg-circle circle2"></div>
+<div class="bg-circle circle3"></div>
 
 <div class="login-card">
 
-    <img src="images/logo.jpg" class="logo">
+<img src="images/logo.png" class="logo">
 
-    <h1>FaarisMart</h1>
+<h1>FaarisMart</h1>
 
-    <p class="subtitle">Shop Smarter. Live Better.</p>
+<p class="subtitle">Shop Smarter. Live Better.</p>
 
-    <img src="images/cartillustration.jpg"
-         class="cart-image">
+<form id="loginForm">
 
-    <form id="loginForm">
+<div class="input-box">
 
-        <div class="input-box">
-            <i class="fa-solid fa-user"></i>
+<i class="fa-solid fa-user"></i>
 
-            <input
-            type="text"
-            id="username"
-            placeholder="Username"
-            required>
-        </div>
-
-        <div class="input-box">
-
-            <i class="fa-solid fa-lock"></i>
-
-            <input
-            type="password"
-            id="password"
-            placeholder="Password"
-            required>
-
-            <span id="togglePassword">
-                <i class="fa-solid fa-eye"></i>
-            </span>
-
-        </div>
-
-        <div class="options">
-
-            <label>
-                <input type="checkbox">
-                Remember Me
-            </label>
-
-            <a href="#">Forgot?</a>
-
-        </div>
-
-    <button type="submit" class="login-btn">
-    Login
-</button>
-
-    </form>
-
-    <div class="divider">
-        <span>or</span>
-    </div>
-
-    <button class="google-btn">
-        <i class="fa-brands fa-google"></i>
-        Continue with Google
-    </button>
-
-    <p class="register">
-        New here?
-        <a href="register.html">Create Account</a>
-    </p>
+<input
+type="text"
+id="username"
+placeholder="Username"
+required>
 
 </div>
 
-<script src="app.js"></script>
+<div class="input-box">
+
+<i class="fa-solid fa-lock"></i>
+
+<input
+type="password"
+id="password"
+placeholder="Password"
+required>
+
+<span id="togglePassword">
+
+<i class="fa-solid fa-eye"></i>
+
+</span>
+
+</div>
+
+<div class="options">
+
+<label>
+
+<input type="checkbox">
+
+Remember Me
+
+</label>
+
+<a href="#">Forgot Password?</a>
+
+</div>
+
+<button type="submit" class="login-btn">
+
+Login
+
+</button>
+
+</form>
+
+<div class="divider">
+
+<span>or</span>
+
+</div>
+
+<button class="google-btn">
+
+<i class="fa-brands fa-google"></i>
+
+Continue with Google
+
+</button>
+
+<p class="register">
+
+Don't have an account?
+
+<a href="register.html">
+
+Create Account
+
+</a>
+
+</p>
+
+</div>
+
+<script src="js/login.js"></script>
 
 </body>
 </html>
