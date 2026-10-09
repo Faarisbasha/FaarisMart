@@ -1,0 +1,489 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | FaarisMart</title>
+
+    <!-- Main FaarisMart stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #f4f6fb;
+            color: #172033;
+            font-family: Arial, sans-serif;
+        }
+
+        .profile-navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 18px 7%;
+            background: #101a32;
+            color: white;
+        }
+
+        .profile-brand {
+            color: #f5c66b;
+            font-size: 24px;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .profile-navbar nav {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .profile-navbar nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .profile-navbar nav a:hover {
+            color: #f5c66b;
+        }
+
+        .profile-wrapper {
+            width: min(920px, 92%);
+            margin: 45px auto;
+        }
+
+        .page-heading {
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        .page-heading p {
+            color: #687386;
+            line-height: 1.6;
+        }
+
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .profile-card,
+        .details-card {
+            padding: 28px;
+            border: 1px solid #e5e9f2;
+            border-radius: 18px;
+            background: white;
+            box-shadow: 0 8px 30px rgba(20, 35, 70, 0.06);
+        }
+
+        .profile-card {
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #153c8a, #13a9d6);
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .profile-card h2 {
+            margin: 0 0 8px;
+            overflow-wrap: anywhere;
+            font-size: 21px;
+        }
+
+        .profile-card p {
+            color: #778196;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .account-badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #e8f8ef;
+            color: #16834a;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .details-card h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .section-description {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #778196;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .profile-field {
+            margin-bottom: 20px;
+        }
+
+        .profile-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .profile-field input {
+            display: block;
+            width: 100%;
+            min-height: 46px;
+            padding: 12px 14px;
+            border: 1px solid #d8deea;
+            border-radius: 9px;
+            background: #fff;
+            color: #172033;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .profile-field input:focus {
+            border-color: #1769e0;
+            box-shadow: 0 0 0 3px rgba(23, 105, 224, 0.1);
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 9px;
+            background: #153c8a;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #102e69;
+        }
+
+        .btn-secondary {
+            border: 1px solid #d8deea;
+            background: white;
+            color: #25324b;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f4f9;
+        }
+
+        .btn-danger {
+            background: #b42332;
+        }
+
+        .btn-danger:hover {
+            background: #8f1825;
+        }
+
+        #profileMessage {
+            min-height: 20px;
+            margin: 18px 0 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .profile-footer {
+            padding: 25px;
+            text-align: center;
+            color: #778196;
+            font-size: 13px;
+        }
+
+        @media (max-width: 680px) {
+            .profile-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-navbar {
+                padding: 18px 5%;
+            }
+
+            .profile-wrapper {
+                margin: 28px auto;
+            }
+
+            .profile-card,
+            .details-card {
+                padding: 22px;
+            }
+
+            .page-heading h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <header class="profile-navbar">
+        <a class="profile-brand" href="index.html">FaarisMart</a>
+
+        <nav aria-label="Main navigation">
+            <a href="index.html">Home</a>
+            <a href="product.html">Products</a>
+            <a href="cart.html">Cart</a>
+            <a href="orders.html">My Orders</a>
+        </nav>
+    </header>
+
+    <main class="profile-wrapper">
+
+        <div class="page-heading">
+            <h1>My Profile</h1>
+            <p>Manage your personal details and account information.</p>
+        </div>
+
+        <div class="profile-layout">
+
+            <!-- Profile summary -->
+            <aside class="profile-card">
+                <div class="profile-avatar" id="avatar">U</div>
+
+                <h2 id="displayUsername">Your Account</h2>
+                <p id="displayEmail">Add your email address</p>
+
+                <span class="account-badge">Customer Account</span>
+            </aside>
+
+            <!-- Profile details -->
+            <section class="details-card">
+                <h2>Personal Information</h2>
+
+                <p class="section-description">
+                    Update the details displayed on this browser.
+                </p>
+
+                <form id="profileForm">
+
+                    <div class="profile-field">
+                        <label for="username">Username</label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            autocomplete="username"
+                            maxlength="60"
+                            placeholder="Enter your username"
+                            required
+                        >
+                    </div>
+
+                    <div class="profile-field">
+                        <label for="email">Email Address</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            autocomplete="email"
+                            maxlength="254"
+                            placeholder="Enter your email"
+                            required
+                        >
+                    </div>
+
+                    <div class="profile-actions">
+                        <button type="submit" class="btn">
+                            Save Profile
+                        </button>
+
+                        <a href="orders.html" class="btn btn-secondary">
+                            My Orders
+                        </a>
+                    </div>
+
+                    <p id="profileMessage" role="status" aria-live="polite"></p>
+                </form>
+
+                <hr style="border: 0; border-top: 1px solid #e5e9f2; margin: 28px 0;">
+
+                <h2>Account Actions</h2>
+                <p class="section-description">
+                    Return to shopping or sign out of this browser.
+                </p>
+
+                <div class="profile-actions">
+                    <a href="index.html" class="btn btn-secondary">
+                        Continue Shopping
+                    </a>
+
+                    <button type="button" id="logoutBtn" class="btn btn-danger">
+                        Logout
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="profile-footer">
+        &copy; <span id="currentYear"></span> FaarisMart. All rights reserved.
+    </footer>
+
+    <script>
+        "use strict";
+
+        const profileForm = document.getElementById("profileForm");
+        const usernameInput = document.getElementById("username");
+        const emailInput = document.getElementById("email");
+        const avatar = document.getElementById("avatar");
+        const displayUsername = document.getElementById("displayUsername");
+        const displayEmail = document.getElementById("displayEmail");
+        const profileMessage = document.getElementById("profileMessage");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        document.getElementById("currentYear").textContent =
+            new Date().getFullYear();
+
+        /*
+         * This starter version uses localStorage.
+         * It does not fetch the authenticated user from PostgreSQL.
+         * It also does not verify a login session.
+         */
+
+        function loadProfile() {
+            try {
+                usernameInput.value =
+                    localStorage.getItem("username") || "";
+
+                emailInput.value =
+                    localStorage.getItem("email") || "";
+
+                updateProfilePreview();
+            } catch (error) {
+                console.error("Unable to load profile:", error);
+                showMessage(
+                    "Browser storage is unavailable. Your details could not be loaded.",
+                    true
+                );
+            }
+        }
+
+        function updateProfilePreview() {
+            const username = usernameInput.value.trim();
+            const email = emailInput.value.trim();
+
+            avatar.textContent =
+                (username || "U").charAt(0).toUpperCase();
+
+            displayUsername.textContent = username || "Your Account";
+            displayEmail.textContent = email || "Add your email address";
+        }
+
+        function showMessage(text, isError = false) {
+            profileMessage.textContent = text;
+            profileMessage.style.color = isError ? "#b42332" : "#16834a";
+        }
+
+        usernameInput.addEventListener("input", updateProfilePreview);
+        emailInput.addEventListener("input", updateProfilePreview);
+
+        profileForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const username = usernameInput.value.trim();
+            const email = emailInput.value.trim();
+
+            if (!username || !email) {
+                showMessage("Please enter your username and email.", true);
+                return;
+            }
+
+            if (!usernameInput.checkValidity() ||
+                !emailInput.checkValidity()) {
+                showMessage("Please enter valid profile details.", true);
+                return;
+            }
+
+            try {
+                localStorage.setItem("username", username);
+                localStorage.setItem("email", email);
+
+                updateProfilePreview();
+                showMessage("Profile saved in this browser.");
+            } catch (error) {
+                console.error("Unable to save profile:", error);
+                showMessage(
+                    "Unable to save your profile in this browser.",
+                    true
+                );
+            }
+        });
+
+        logoutBtn.addEventListener("click", function () {
+            const confirmed = window.confirm(
+                "Do you want to log out? You may need to sign in again."
+            );
+
+            if (!confirmed) return;
+
+            /*
+             * Remove only common local login indicators.
+             * Keep username and email so they remain available on this browser.
+             * Adjust these keys to match your actual login.js implementation.
+             */
+            [
+                "loggedIn",
+                "isLoggedIn",
+                "currentUser",
+                "userToken",
+                "token"
+            ].forEach(function (key) {
+                localStorage.removeItem(key);
+            });
+
+            window.location.href = "login.html";
+        });
+
+        loadProfile();
+    </script>
+
+</body>
+</html>
+```
