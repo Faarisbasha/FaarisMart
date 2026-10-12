@@ -1,23 +1,41 @@
+
 #include "database.h"
 #include <iostream>
-
-using namespace std;
+#include <cstdlib>
+#include <libpq-fe.h>
 
 PGconn* connectDB()
 {
-    PGconn* conn = PQconnectdb(
-        "host=localhost port=5432 dbname=faarismart user=postgres password=faaris2705"
-    );
+    // Read the database connection URL from the environment
+    const char* conninfo = std::getenv("DATABASE_URL");
 
+    if (conninfo == nullptr || conninfo[0] == '\0')
+    {
+        std::cerr << "DATABASE_URL is not configured!\n";
+        return nullptr;
+    }
+
+    // Connect to PostgreSQL
+    PGconn* conn = PQconnectdb(conninfo);
+
+    // Check whether the connection was created
+    if (conn == nullptr)
+    {
+        std::cerr << "Could not create PostgreSQL connection!\n";
+        return nullptr;
+    }
+
+    // Check whether the database connection succeeded
     if (PQstatus(conn) != CONNECTION_OK)
     {
-        cout << "Database Connection Failed!\n";
-        cout << PQerrorMessage(conn) << endl;
+        std::cerr << "Database connection failed: "
+                  << PQerrorMessage(conn) << '\n';
+
+        PQfinish(conn);
+        return nullptr;
     }
-    else
-    {
-        cout << "Database Connected Successfully!\n";
-    }
+
+    std::cout << "Database connected successfully!\n";
 
     return conn;
 }

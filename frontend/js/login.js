@@ -1,7 +1,9 @@
-// ==========================================
-// FAARISMART LOGIN
-// ==========================================
 
+/* ==========================================
+   FAARISMART LOGIN
+========================================== */
+
+// Local backend API
 const API = "http://127.0.0.1:8080";
 
 // Elements
@@ -12,58 +14,51 @@ const togglePassword = document.getElementById("togglePassword");
 const loginBtn = document.getElementById("loginBtn");
 const rememberMe = document.getElementById("rememberMe");
 
-// ------------------------------------------
-// Auto Login
-// ------------------------------------------
+// ==========================================
+// AUTO LOGIN
+// ==========================================
 
 window.addEventListener("load", () => {
-
-    const savedUser = localStorage.getItem("faarisUser");
+    const savedUser =
+        localStorage.getItem("faarisUser") ||
+        sessionStorage.getItem("faarisUser");
 
     if (savedUser) {
-        window.location.href = "index.html";
+        window.location.replace("index.html");
     }
-
 });
 
-// ------------------------------------------
-// Show / Hide Password
-// ------------------------------------------
+// ==========================================
+// SHOW / HIDE PASSWORD
+// ==========================================
 
-togglePassword.addEventListener("click", () => {
+if (togglePassword) {
+    togglePassword.addEventListener("click", () => {
+        const icon = togglePassword.querySelector("i");
 
-    const icon = togglePassword.querySelector("i");
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.replace("fa-eye", "fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.replace("fa-eye-slash", "fa-eye");
+        }
+    });
+}
 
-    if (passwordInput.type === "password") {
-
-        passwordInput.type = "text";
-        icon.classList.replace("fa-eye", "fa-eye-slash");
-
-    } else {
-
-        passwordInput.type = "password";
-        icon.classList.replace("fa-eye-slash", "fa-eye");
-
-    }
-
-});
-
-// ------------------------------------------
-// Login
-// ------------------------------------------
+// ==========================================
+// LOGIN
+// ==========================================
 
 form.addEventListener("submit", async (e) => {
-
     e.preventDefault();
 
     const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
+    const password = passwordInput.value;
 
     if (!username || !password) {
-
         alert("Please enter username and password.");
         return;
-
     }
 
     loginBtn.disabled = true;
@@ -71,59 +66,61 @@ form.addEventListener("submit", async (e) => {
         '<i class="fa-solid fa-spinner fa-spin"></i> Signing In...';
 
     try {
-
-        const response = await fetch(API + "/login", {
-
+        const response = await fetch(`${API}/login`, {
             method: "POST",
-
             headers: {
                 "Content-Type": "application/json"
             },
-
             body: JSON.stringify({
-                username,
-                password
+                username: username,
+                password: password
             })
-
         });
 
         const data = await response.json();
 
         console.log("Login Response:", data);
 
-        if (data.success) {
+        if (!response.ok) {
+            throw new Error(
+                data.message || `Server error: ${response.status}`
+            );
+        }
 
-            if (rememberMe.checked) {
+        if (data.success === true) {
+            // Clear any previous login session
+            localStorage.removeItem("faarisUser");
+            localStorage.removeItem("userId");
+            sessionStorage.removeItem("faarisUser");
+            sessionStorage.removeItem("userId");
 
-                localStorage.setItem("faarisUser", data.username);
-                localStorage.setItem("userId", data.user_id);
+            // Save login based on Remember Me
+            const storage = rememberMe.checked
+                ? localStorage
+                : sessionStorage;
 
-            } else {
+            storage.setItem("faarisUser", data.username || username);
 
-                sessionStorage.setItem("faarisUser", data.username);
-                sessionStorage.setItem("userId", data.user_id);
-
+            if (data.user_id !== undefined && data.user_id !== null) {
+                storage.setItem("userId", data.user_id);
             }
 
+            // Go to homepage after successful login
             window.location.href = "index.html";
-
         } else {
-
-            alert(data.message || "Invalid Username or Password");
-
+            alert(data.message || "Invalid username or password.");
         }
 
     } catch (error) {
+        console.error("Login Error:", error);
 
-        console.error(error);
-
-        alert("Backend not connected. Please start FaarisAPI.exe.");
+        alert(
+            "Unable to log in. Check that FaarisAPI.exe is running " +
+            "and the backend is reachable. See the browser Console for details."
+        );
 
     } finally {
-
         loginBtn.disabled = false;
         loginBtn.innerHTML = "Login";
-
     }
-
 });
