@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:8080";
+const API = (typeof getApiBaseUrl === "function" ? getApiBaseUrl() : (window.API || "http://127.0.0.1:8080"));
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 

@@ -1,10 +1,9 @@
-
 /* ==========================================
    FAARISMART LOGIN
 ========================================== */
 
-// Local backend API
-const API = "http://127.0.0.1:8080";
+// Use centralized API endpoint
+const getEndpoint = () => (typeof getApiBaseUrl === "function" ? getApiBaseUrl() : (window.API || "http://127.0.0.1:8080"));
 
 // Elements
 const form = document.getElementById("loginForm");
@@ -66,6 +65,7 @@ form.addEventListener("submit", async (e) => {
         '<i class="fa-solid fa-spinner fa-spin"></i> Signing In...';
 
     try {
+        const API = getEndpoint();
         const response = await fetch(`${API}/login`, {
             method: "POST",
             headers: {
@@ -77,17 +77,16 @@ form.addEventListener("submit", async (e) => {
             })
         });
 
-        const data = await response.json();
+        let data = {};
+        try {
+            data = await response.json();
+        } catch (jsonErr) {
+            data = {};
+        }
 
         console.log("Login Response:", data);
 
-        if (!response.ok) {
-            throw new Error(
-                data.message || `Server error: ${response.status}`
-            );
-        }
-
-        if (data.success === true) {
+        if (response.ok && data.success === true) {
             // Clear any previous login session
             localStorage.removeItem("faarisUser");
             localStorage.removeItem("userId");
@@ -108,6 +107,7 @@ form.addEventListener("submit", async (e) => {
             // Go to homepage after successful login
             window.location.href = "index.html";
         } else {
+            // Display user-friendly error message from server
             alert(data.message || "Invalid username or password.");
         }
 
@@ -115,8 +115,7 @@ form.addEventListener("submit", async (e) => {
         console.error("Login Error:", error);
 
         alert(
-            "Unable to log in. Check that FaarisAPI.exe is running " +
-            "and the backend is reachable. See the browser Console for details."
+            "Unable to reach the backend API. Please verify the server is running and check your internet connection."
         );
 
     } finally {

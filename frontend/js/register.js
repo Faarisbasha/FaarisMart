@@ -3,7 +3,7 @@
 // frontend/js/register.js
 // ==========================================
 
-const API_URL = "http://127.0.0.1:8080";
+const getEndpoint = () => (typeof getApiBaseUrl === "function" ? getApiBaseUrl() : (window.API_URL || "http://127.0.0.1:8080"));
 
 // -------------------- Elements --------------------
 
@@ -17,19 +17,21 @@ const registerBtn = document.getElementById("registerBtn");
 
 // -------------------- Show/Hide Password --------------------
 
-togglePassword.addEventListener("click", () => {
-    const icon = togglePassword.querySelector("i");
+if (togglePassword) {
+    togglePassword.addEventListener("click", () => {
+        const icon = togglePassword.querySelector("i");
 
-    if (passwordInput.type === "password") {
-        passwordInput.type = "text";
-        confirmPasswordInput.type = "text";
-        icon.classList.replace("fa-eye", "fa-eye-slash");
-    } else {
-        passwordInput.type = "password";
-        confirmPasswordInput.type = "password";
-        icon.classList.replace("fa-eye-slash", "fa-eye");
-    }
-});
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            confirmPasswordInput.type = "text";
+            icon.classList.replace("fa-eye", "fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            confirmPasswordInput.type = "password";
+            icon.classList.replace("fa-eye-slash", "fa-eye");
+        }
+    });
+}
 
 // -------------------- Email Validation --------------------
 
@@ -74,7 +76,7 @@ form.addEventListener("submit", async (e) => {
         '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
 
     try {
-
+        const API_URL = getEndpoint();
         const response = await fetch(`${API_URL}/register`, {
             method: "POST",
             headers: {
@@ -87,9 +89,14 @@ form.addEventListener("submit", async (e) => {
             })
         });
 
-        const data = await response.json();
+        let data = {};
+        try {
+            data = await response.json();
+        } catch (jsonErr) {
+            data = {};
+        }
 
-        if (data.success) {
+        if (response.ok && data.success) {
 
             alert("🎉 Account Created Successfully!");
 
@@ -99,14 +106,14 @@ form.addEventListener("submit", async (e) => {
 
         } else {
 
-            alert(data.message || "Registration failed.");
+            alert(data.message || "Registration failed. Please check your details.");
 
         }
 
     } catch (error) {
 
         console.error(error);
-        alert("Backend not connected. Please start FaarisAPI.exe.");
+        alert("Unable to reach backend API. Please check your network connection.");
 
     } finally {
 

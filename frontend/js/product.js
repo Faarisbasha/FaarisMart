@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:8080";
+const API = (typeof getApiBaseUrl === "function" ? getApiBaseUrl() : (window.API || "http://127.0.0.1:8080"));
 
 // Get product ID from URL
 const params = new URLSearchParams(window.location.search);

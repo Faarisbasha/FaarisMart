@@ -191,9 +191,10 @@ Home
 
 </div>
 
+<script src="js/api.js"></script>
 <script>
 
-const API = "http://127.0.0.1:8080";
+const getEndpoint = () => (typeof getApiBaseUrl === "function" ? getApiBaseUrl() : (window.API || "http://127.0.0.1:8080"));
 
 async function loadOrders(){
 
@@ -201,8 +202,11 @@ const container=document.getElementById("ordersContainer");
 
 try{
 
-const res=await fetch(API+"/orders");
-const orders=await res.json();
+const API = getEndpoint();
+const userId = localStorage.getItem("userId");
+const url = userId ? `${API}/orders?user_id=${encodeURIComponent(userId)}` : `${API}/orders`;
+const res = await fetch(url);
+const orders = await res.json();
 
 if(orders.length===0){
 

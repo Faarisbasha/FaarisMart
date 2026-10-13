@@ -316,6 +316,7 @@ Continue Shopping
 
 </div>
 
+<script src="js/api.js"></script>
 <script>
 
 let cart=JSON.parse(localStorage.getItem("cart"))||[];
@@ -341,7 +342,7 @@ orderItems.innerHTML+=`
 document.getElementById("totalPrice").innerText=
 "₹"+total.toLocaleString("en-IN");
 
-document.getElementById("checkoutForm").addEventListener("submit",function(e){
+document.getElementById("checkoutForm").addEventListener("submit", async function(e){
 
 e.preventDefault();
 
@@ -353,9 +354,43 @@ return;
 
 }
 
-document.getElementById("popup").style.display="flex";
+const name = document.getElementById("name").value.trim();
+const phone = document.getElementById("phone").value.trim();
+const address = document.getElementById("address").value.trim();
+const city = document.getElementById("city").value.trim();
+const pincode = document.getElementById("pincode").value.trim();
+const payment = document.querySelector("input[name='payment']:checked")?.value || "COD";
+const fullAddress = address + ", " + city + " - " + pincode;
+const userId = localStorage.getItem("userId") || null;
 
-localStorage.removeItem("cart");
+const orderData = {
+    user_id: userId,
+    customer_name: name,
+    phone: phone,
+    address: fullAddress,
+    payment_method: payment,
+    total: total
+};
+
+try {
+    const base = typeof getApiBaseUrl === "function" ? getApiBaseUrl() : (window.API || "http://127.0.0.1:8080");
+    const res = await fetch(`${base}/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData)
+    });
+    const data = await res.json();
+    if (data.success) {
+        document.getElementById("popup").style.display="flex";
+        localStorage.removeItem("cart");
+    } else {
+        alert(data.message || "Failed to save order.");
+    }
+} catch (err) {
+    console.error("Order submit error:", err);
+    document.getElementById("popup").style.display="flex";
+    localStorage.removeItem("cart");
+}
 
 });
 
