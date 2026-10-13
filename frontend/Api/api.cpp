@@ -262,13 +262,13 @@ class DatabaseManager {
 private:
     std::string conninfo;
     PGconn* conn = nullptr;
-    std::mutex mtx;
+    std::recursive_mutex mtx;
 
 public:
     DatabaseManager(const std::string& info) : conninfo(info) {}
 
     ~DatabaseManager() {
-        std::lock_guard<std::mutex> lock(mtx);
+        std::lock_guard<std::recursive_mutex> lock(mtx);
         if (conn) {
             PQfinish(conn);
             conn = nullptr;
@@ -276,7 +276,7 @@ public:
     }
 
     bool init() {
-        std::lock_guard<std::mutex> lock(mtx);
+        std::lock_guard<std::recursive_mutex> lock(mtx);
         conn = PQconnectdb(conninfo.c_str());
         if (conn == nullptr) {
             std::cerr << "[FATAL] Could not allocate PostgreSQL connection object.\n";
@@ -294,7 +294,7 @@ public:
     }
 
     bool isHealthy() {
-        std::lock_guard<std::mutex> lock(mtx);
+        std::lock_guard<std::recursive_mutex> lock(mtx);
         return ensureConnectedInternal();
     }
 
@@ -316,7 +316,7 @@ public:
         return true;
     }
 
-    std::mutex& getMutex() {
+    std::recursive_mutex& getMutex() {
         return mtx;
     }
 
@@ -327,9 +327,84 @@ public:
         return conn;
     }
 
+    // Safe, idempotent product seeder (inserts only missing products by name)
+    bool seedProductsIfMissing() {
+        std::lock_guard<std::recursive_mutex> lock(mtx);
+        return seedProductsIfMissingInternal();
+    }
+
+    bool seedProductsIfMissingInternal() {
+        if (!ensureConnectedInternal()) return false;
+
+        // 1. Ensure all expected columns exist on the products table
+        const char* columnAlterStatements[] = {
+            "ALTER TABLE products ADD COLUMN IF NOT EXISTS image VARCHAR(255) DEFAULT 'placeholder.png';",
+            "ALTER TABLE products ADD COLUMN IF NOT EXISTS description TEXT DEFAULT '';",
+            "ALTER TABLE products ADD COLUMN IF NOT EXISTS category VARCHAR(100) DEFAULT 'General';",
+            "ALTER TABLE products ADD COLUMN IF NOT EXISTS stock INT DEFAULT 0;",
+            "ALTER TABLE products ADD COLUMN IF NOT EXISTS rating NUMERIC(2, 1) DEFAULT 4.5;"
+        };
+
+        for (const char* alterSql : columnAlterStatements) {
+            PGresult* altRes = PQexec(conn, alterSql);
+            if (PQresultStatus(altRes) != PGRES_COMMAND_OK) {
+                std::cerr << "[WARN] Column migration note: " << PQerrorMessage(conn) << "\n";
+            }
+            PQclear(altRes);
+        }
+
+        // 2. Insert sample products across categories only when missing
+        const char* seedSql =
+            "INSERT INTO products (product_name, price, image, description, category, stock, rating) "
+            "SELECT p.product_name, p.price, p.image, p.description, p.category, p.stock, p.rating "
+            "FROM (VALUES "
+            "('ASUS TUF Gaming F15', 52990.00::numeric, 'asusutuf15.jpg', 'Intel Core i5 11th Gen, 16GB RAM, 512GB SSD, RTX 2050 Graphics, 144Hz FHD Display', 'Electronics', 15, 4.6::numeric), "
+            "('HP Victus Gaming Laptop', 62990.00::numeric, 'hpvictus.jpg', 'AMD Ryzen 5 5600H, 16GB RAM, 512GB SSD, AMD Radeon RX 6500M, 15.6 inch FHD', 'Electronics', 12, 4.5::numeric), "
+            "('Lenovo IdeaPad Slim 3', 38990.00::numeric, 'lenovo.jpg', 'Intel Core i3 12th Gen, 8GB RAM, 512GB SSD, Windows 11 Home, Thin & Light', 'Electronics', 20, 4.3::numeric), "
+            "('Apple iPhone 15 (128 GB)', 69900.00::numeric, 'iphone15.jpg', 'Dynamic Island, 48MP Main Camera, USB-C, A16 Bionic chip, All-Day Battery Life', 'Electronics', 25, 4.8::numeric), "
+            "('Samsung Galaxy S24 5G', 74999.00::numeric, 'galaxys24.jpg', 'Galaxy AI, 8GB RAM, 128GB Storage, 50MP Camera, Dynamic AMOLED 2X Display', 'Electronics', 18, 4.7::numeric), "
+            "('OnePlus 13 5G', 54999.00::numeric, 'oneplus13.jpg', 'Snapdragon 8 Elite, 16GB RAM, 256GB Storage, Hasselblad Camera, 100W SUPERVOOC', 'Electronics', 22, 4.7::numeric), "
+            "('Realme P1 Speed 5G', 17999.00::numeric, 'realmep1speed.jpg', 'Dimensity 7300 Energy 5G, 8GB RAM, 128GB ROM, 120Hz OLED, 45W Fast Charging', 'Electronics', 30, 4.4::numeric), "
+            "('Sony WH-CH520 Wireless Headphones', 3990.00::numeric, 'sonywhch520.jpg', 'Up to 50 Hours Battery Life, DSEE Upscaling, Multipoint Connection, Built-in Mic', 'Electronics', 40, 4.5::numeric), "
+            "('boAt Airdopes 141 ANC', 1499.00::numeric, 'boatearbuds.jpg', 'Active Noise Cancellation (up to 32dB), 42H Playtime, ENx Tech, ASAP Charge', 'Electronics', 50, 4.2::numeric), "
+            "('JBL Flip 6 Bluetooth Speaker', 9999.00::numeric, 'jblflip6.jpg', 'Powerful 2-Way Speaker System, IP67 Waterproof & Dustproof, 12 Hours Playtime', 'Electronics', 15, 4.7::numeric), "
+            "('Logitech G102 Lightsync Mouse', 1495.00::numeric, 'logitechg102.jpg', '8000 DPI Sensor, Customizable RGB Lighting, 6 Programmable Buttons', 'Electronics', 35, 4.6::numeric), "
+            "('HP Wireless Optical Mouse', 699.00::numeric, 'hpwirelessmouse..jpg', '2.4GHz Wireless Connectivity, 1600 DPI, Long Battery Life, Ergonomic Design', 'Electronics', 45, 4.3::numeric), "
+            "('Redgear Mechanical Keyboard', 2299.00::numeric, 'redgearkeyboard.jpg', 'Blue Mechanical Switches, Rainbow LED Backlit, Control Knob, Wrist Rest', 'Electronics', 20, 4.4::numeric), "
+            "('Xiaomi Smart Band 9', 2999.00::numeric, 'miband9.jpg', '1.62 inch AMOLED Display, 150+ Sports Modes, 21-Day Battery Life, Heart Rate & SpO2', 'Electronics', 28, 4.5::numeric), "
+            "('SanDisk Ultra 128GB MicroSD', 899.00::numeric, 'sandisk128gb.jpg', 'Up to 140MB/s Read Speed, Class 10, A1 App Performance, Full HD Video Support', 'Electronics', 60, 4.7::numeric), "
+            "('Nike Air Max SC Running Shoes', 5995.00::numeric, 'nikeshoes.jpg', 'Lightweight cushioning, breathable mesh and leather upper, heritage running look', 'Footwear', 14, 4.6::numeric), "
+            "('Adidas Ultraboost Light Shoes', 11999.00::numeric, 'adidasultraboost.jpg', 'Light BOOST midsole, Primeknit+ upper, Continental Rubber outsole for superior grip', 'Footwear', 10, 4.8::numeric), "
+            "('Puma Smash V2 Casual Sneakers', 2499.00::numeric, 'pumasneakers.jpg', 'Classic tennis-inspired silhouette, soft suede upper, durable rubber outsole', 'Footwear', 22, 4.3::numeric), "
+            "('Bata Formal Leather Shoes', 1999.00::numeric, 'batashoes.jpg', 'Genuine leather formal lace-up derby shoes, cushioned insole for all-day comfort', 'Footwear', 18, 4.2::numeric), "
+            "('Levis 511 Slim Fit Stretch Jeans', 2599.00::numeric, 'levisjeans.jpg', 'Slim through the thigh with a straight leg, premium stretch denim comfort', 'Fashion', 25, 4.5::numeric), "
+            "('Allen Solly Slim Fit Shirt', 1499.00::numeric, 'allensollyshirt.jpg', '100% Cotton, spread collar, long sleeves, versatile formal and casual wear', 'Fashion', 30, 4.4::numeric), "
+            "('Roadster Pure Cotton T-Shirt', 499.00::numeric, 'roadstertshirt.jpg', '100% Breathable cotton round neck casual t-shirt, relaxed regular fit', 'Fashion', 40, 4.2::numeric), "
+            "('Puma Fleece Pullover Hoodie', 2199.00::numeric, 'pumahoodie..jpg', 'Warm cotton-poly fleece, adjustable drawstring hood, kangaroo front pocket', 'Fashion', 16, 4.5::numeric), "
+            "('Fossil Leather Bifold Wallet', 2995.00::numeric, 'fossilwallet.jpg', '100% Genuine leather, RFID blocking technology, 8 card slots, 2 bill compartments', 'Accessories', 20, 4.6::numeric), "
+            "('Amazon Basics Laptop Sleeve', 699.00::numeric, 'amazonsleeve.jpg', 'Padded neoprene protective case, slim and compact, top zipper opening', 'Accessories', 35, 4.5::numeric) "
+            ") AS p(product_name, price, image, description, category, stock, rating) "
+            "WHERE NOT EXISTS ( "
+            "  SELECT 1 FROM products existing WHERE existing.product_name = p.product_name "
+            ");";
+
+        PGresult* seedRes = PQexec(conn, seedSql);
+        if (PQresultStatus(seedRes) == PGRES_COMMAND_OK) {
+            char* insertedCount = PQcmdTuples(seedRes);
+            std::cout << "[INFO] Idempotent product seed executed. Rows inserted: "
+                      << (insertedCount && insertedCount[0] ? insertedCount : "0") << "\n";
+            PQclear(seedRes);
+            return true;
+        } else {
+            std::cerr << "[ERROR] Product seeding failed: " << PQerrorMessage(conn) << "\n";
+            PQclear(seedRes);
+            return false;
+        }
+    }
+
     // Run safe repeatable DDL initialization
     void runSchemaInit() {
-        std::lock_guard<std::mutex> lock(mtx);
+        std::lock_guard<std::recursive_mutex> lock(mtx);
         if (!ensureConnectedInternal()) return;
 
         const char* ddlStatements[] = {
@@ -356,11 +431,10 @@ public:
             "  product_name VARCHAR(255) NOT NULL,"
             "  price NUMERIC(10, 2) NOT NULL,"
             "  image VARCHAR(255) DEFAULT 'placeholder.png',"
-            "  description TEXT,"
-            "  category VARCHAR(100),"
+            "  description TEXT DEFAULT '',"
+            "  category VARCHAR(100) DEFAULT 'General',"
             "  stock INT DEFAULT 0,"
             "  rating NUMERIC(2, 1) DEFAULT 4.5,"
-            "  seller_username VARCHAR(50) DEFAULT 'admin',"
             "  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP"
             ");",
 
@@ -406,49 +480,8 @@ public:
             PQclear(res);
         }
 
-        // Check if products table is empty; if so, populate initial catalogue
-        PGresult* countRes = PQexec(conn, "SELECT COUNT(*) FROM products;");
-        if (PQresultStatus(countRes) == PGRES_TUPLES_OK && PQntuples(countRes) > 0) {
-            int count = std::atoi(PQgetvalue(countRes, 0, 0));
-            if (count == 0) {
-                std::cout << "[INFO] Products table is empty. Seeding initial catalogue...\n";
-                const char* seedSql =
-                    "INSERT INTO products (product_id, product_name, price, image, description, category, stock, rating, seller_username) VALUES "
-                    "(1, 'ASUS TUF Gaming F15', 52990.00, 'asusutuf15.jpg', 'Intel Core i5 11th Gen, 16GB RAM, 512GB SSD, RTX 2050 Graphics, 144Hz FHD Display', 'Electronics', 15, 4.6, 'admin'), "
-                    "(2, 'HP Victus Gaming Laptop', 62990.00, 'hpvictus.jpg', 'AMD Ryzen 5 5600H, 16GB RAM, 512GB SSD, AMD Radeon RX 6500M, 15.6 inch FHD', 'Electronics', 12, 4.5, 'admin'), "
-                    "(3, 'Lenovo IdeaPad Slim 3', 38990.00, 'lenovo.jpg', 'Intel Core i3 12th Gen, 8GB RAM, 512GB SSD, Windows 11 Home, Thin & Light', 'Electronics', 20, 4.3, 'admin'), "
-                    "(4, 'Apple iPhone 15 (128 GB)', 69900.00, 'iphone15.jpg', 'Dynamic Island, 48MP Main Camera, USB-C, A16 Bionic chip, All-Day Battery Life', 'Electronics', 25, 4.8, 'admin'), "
-                    "(5, 'Samsung Galaxy S24 5G', 74999.00, 'galaxys24.jpg', 'Galaxy AI, 8GB RAM, 128GB Storage, 50MP Camera, Dynamic AMOLED 2X Display', 'Electronics', 18, 4.7, 'admin'), "
-                    "(6, 'OnePlus 13 5G', 54999.00, 'oneplus13.jpg', 'Snapdragon 8 Elite, 16GB RAM, 256GB Storage, Hasselblad Camera, 100W SUPERVOOC', 'Electronics', 22, 4.7, 'admin'), "
-                    "(7, 'Realme P1 Speed 5G', 17999.00, 'realmep1speed.jpg', 'Dimensity 7300 Energy 5G, 8GB RAM, 128GB ROM, 120Hz OLED, 45W Fast Charging', 'Electronics', 30, 4.4, 'admin'), "
-                    "(8, 'Sony WH-CH520 Wireless Headphones', 3990.00, 'sonywhch520.jpg', 'Up to 50 Hours Battery Life, DSEE Upscaling, Multipoint Connection, Built-in Mic', 'Electronics', 40, 4.5, 'admin'), "
-                    "(9, 'boAt Airdopes 141 ANC', 1499.00, 'boatearbuds.jpg', 'Active Noise Cancellation (up to 32dB), 42H Playtime, ENx Tech, ASAP Charge', 'Electronics', 50, 4.2, 'admin'), "
-                    "(10, 'JBL Flip 6 Bluetooth Speaker', 9999.00, 'jblflip6.jpg', 'Powerful 2-Way Speaker System, IP67 Waterproof & Dustproof, 12 Hours Playtime', 'Electronics', 15, 4.7, 'admin'), "
-                    "(11, 'Logitech G102 Lightsync Mouse', 1495.00, 'logitechg102.jpg', '8000 DPI Sensor, Customizable RGB Lighting, 6 Programmable Buttons', 'Electronics', 35, 4.6, 'admin'), "
-                    "(12, 'HP Wireless Optical Mouse', 699.00, 'hpwirelessmouse..jpg', '2.4GHz Wireless Connectivity, 1600 DPI, Long Battery Life, Ergonomic Design', 'Electronics', 45, 4.3, 'admin'), "
-                    "(13, 'Redgear Mechanical Keyboard', 2299.00, 'redgearkeyboard.jpg', 'Blue Mechanical Switches, Rainbow LED Backlit, Control Knob, Wrist Rest', 'Electronics', 20, 4.4, 'admin'), "
-                    "(14, 'Xiaomi Smart Band 9', 2999.00, 'miband9.jpg', '1.62 inch AMOLED Display, 150+ Sports Modes, 21-Day Battery Life, Heart Rate & SpO2', 'Electronics', 28, 4.5, 'admin'), "
-                    "(15, 'SanDisk Ultra 128GB MicroSD', 899.00, 'sandisk128gb.jpg', 'Up to 140MB/s Read Speed, Class 10, A1 App Performance, Full HD Video Support', 'Electronics', 60, 4.7, 'admin'), "
-                    "(16, 'Nike Air Max SC Running Shoes', 5995.00, 'nikeshoes.jpg', 'Lightweight cushioning, breathable mesh and leather upper, heritage running look', 'Footwear', 14, 4.6, 'admin'), "
-                    "(17, 'Adidas Ultraboost Light Shoes', 11999.00, 'adidasultraboost.jpg', 'Light BOOST midsole, Primeknit+ upper, Continental Rubber outsole for superior grip', 'Footwear', 10, 4.8, 'admin'), "
-                    "(18, 'Puma Smash V2 Casual Sneakers', 2499.00, 'pumasneakers.jpg', 'Classic tennis-inspired silhouette, soft suede upper, durable rubber outsole', 'Footwear', 22, 4.3, 'admin'), "
-                    "(19, 'Bata Formal Leather Shoes', 1999.00, 'batashoes.jpg', 'Genuine leather formal lace-up derby shoes, cushioned insole for all-day comfort', 'Footwear', 18, 4.2, 'admin'), "
-                    "(20, 'Levis 511 Slim Fit Stretch Jeans', 2599.00, 'levisjeans.jpg', 'Slim through the thigh with a straight leg, premium stretch denim comfort', 'Fashion', 25, 4.5, 'admin'), "
-                    "(21, 'Allen Solly Slim Fit Shirt', 1499.00, 'allensollyshirt.jpg', '100% Cotton, spread collar, long sleeves, versatile formal and casual wear', 'Fashion', 30, 4.4, 'admin'), "
-                    "(22, 'Roadster Pure Cotton T-Shirt', 499.00, 'roadstertshirt.jpg', '100% Breathable cotton round neck casual t-shirt, relaxed regular fit', 'Fashion', 40, 4.2, 'admin'), "
-                    "(23, 'Puma Fleece Pullover Hoodie', 2199.00, 'pumahoodie..jpg', 'Warm cotton-poly fleece, adjustable drawstring hood, kangaroo front pocket', 'Fashion', 16, 4.5, 'admin'), "
-                    "(24, 'Fossil Leather Bifold Wallet', 2995.00, 'fossilwallet.jpg', '100% Genuine leather, RFID blocking technology, 8 card slots, 2 bill compartments', 'Accessories', 20, 4.6, 'admin'), "
-                    "(25, 'Amazon Basics Laptop Sleeve', 699.00, 'amazonsleeve.jpg', 'Padded neoprene protective case, slim and compact, top zipper opening', 'Accessories', 35, 4.5, 'admin') "
-                    "ON CONFLICT (product_id) DO NOTHING;";
-                PGresult* seedRes = PQexec(conn, seedSql);
-                PQclear(seedRes);
-
-                PGresult* seqRes = PQexec(conn, "SELECT setval('products_product_id_seq', COALESCE((SELECT MAX(product_id) FROM products), 1));");
-                PQclear(seqRes);
-                std::cout << "[INFO] Initial catalogue seeded successfully.\n";
-            }
-        }
-        PQclear(countRes);
+        // Execute idempotent seeding
+        seedProductsIfMissingInternal();
     }
 };
 
@@ -482,7 +515,7 @@ int main() {
         return 1;
     }
 
-    // 3. Run safe schema initialization (CREATE TABLE IF NOT EXISTS)
+    // 3. Run safe schema initialization (CREATE TABLE IF NOT EXISTS + idempotent seed)
     db.runSchemaInit();
 
     // 4. Initialize HTTP Server
@@ -551,7 +584,7 @@ int main() {
         // Hash password securely with random salt
         std::string hashedPassword = crypto::hashPassword(password);
 
-        std::lock_guard<std::mutex> lock(db.getMutex());
+        std::lock_guard<std::recursive_mutex> lock(db.getMutex());
         PGconn* conn = db.getRawConn();
         if (!conn) {
             res.status = 503;
@@ -599,7 +632,7 @@ int main() {
             return;
         }
 
-        std::lock_guard<std::mutex> lock(db.getMutex());
+        std::lock_guard<std::recursive_mutex> lock(db.getMutex());
         PGconn* conn = db.getRawConn();
         if (!conn) {
             res.status = 503;
@@ -665,7 +698,7 @@ int main() {
 
     // ================= PRODUCTS =================
     server.Get("/products", [&db](const Request&, Response& res) {
-        std::lock_guard<std::mutex> lock(db.getMutex());
+        std::lock_guard<std::recursive_mutex> lock(db.getMutex());
         PGconn* conn = db.getRawConn();
         if (!conn) {
             res.status = 503;
@@ -678,6 +711,18 @@ int main() {
             "SELECT product_id, product_name, price, image, description, category, stock, rating "
             "FROM products ORDER BY product_id"
         ));
+
+        // Self-healing: if products table is currently empty, seed missing items and re-query
+        if (PQresultStatus(result) == PGRES_TUPLES_OK && PQntuples(result) == 0) {
+            std::cout << "[INFO] Products table is currently empty during GET /products. Running auto-seed...\n";
+            if (db.seedProductsIfMissingInternal()) {
+                result = PGResultGuard(PQexec(
+                    conn,
+                    "SELECT product_id, product_name, price, image, description, category, stock, rating "
+                    "FROM products ORDER BY product_id"
+                ));
+            }
+        }
 
         if (PQresultStatus(result) != PGRES_TUPLES_OK) {
             std::cerr << "[ERROR] Products query failed: " << PQerrorMessage(conn) << "\n";
@@ -730,7 +775,7 @@ int main() {
 
         const char* userIdParam = userId.empty() ? nullptr : userId.c_str();
 
-        std::lock_guard<std::mutex> lock(db.getMutex());
+        std::lock_guard<std::recursive_mutex> lock(db.getMutex());
         PGconn* conn = db.getRawConn();
         if (!conn) {
             res.status = 503;
@@ -775,7 +820,7 @@ int main() {
 
     // ================= GET ORDERS =================
     server.Get("/orders", [&db](const Request& req, Response& res) {
-        std::lock_guard<std::mutex> lock(db.getMutex());
+        std::lock_guard<std::recursive_mutex> lock(db.getMutex());
         PGconn* conn = db.getRawConn();
         if (!conn) {
             res.status = 503;
