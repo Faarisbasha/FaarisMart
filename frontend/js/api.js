@@ -9,8 +9,7 @@
  * OR in browser console run:
  * localStorage.setItem("FAARISMART_API_URL", "https://your-service.onrender.com");
  */
-const PRODUCTION_API_URL = "";
-
+const PRODUCTION_API_URL = "https://faarismart-api.onrender.com";
 function getApiBaseUrl() {
     // 1. Manually configured production URL
     if (PRODUCTION_API_URL && PRODUCTION_API_URL.trim() !== "") {
