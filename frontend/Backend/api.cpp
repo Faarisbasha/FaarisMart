@@ -521,12 +521,28 @@ int main() {
         cleanDbUrl.erase(0, 13);
     }
 
-    // Strip any surrounding quotes or whitespace and ensure sslmode=require
+    // Strip any surrounding quotes or whitespace
     while (!cleanDbUrl.empty() && (cleanDbUrl.front() == '"' || cleanDbUrl.front() == '\'' || cleanDbUrl.front() == ' ' || cleanDbUrl.front() == '\t')) {
         cleanDbUrl.erase(0, 1);
     }
     while (!cleanDbUrl.empty() && (cleanDbUrl.back() == '"' || cleanDbUrl.back() == '\'' || cleanDbUrl.back() == ' ' || cleanDbUrl.back() == '\t' || cleanDbUrl.back() == '\r' || cleanDbUrl.back() == '\n')) {
         cleanDbUrl.pop_back();
+    }
+
+    // Normalize query string: replace any accidental multiple '?' with '&'
+    size_t firstQuestion = cleanDbUrl.find('?');
+    if (firstQuestion != std::string::npos) {
+        for (size_t i = firstQuestion + 1; i < cleanDbUrl.size(); ++i) {
+            if (cleanDbUrl[i] == '?') {
+                cleanDbUrl[i] = '&';
+            }
+        }
+    }
+
+    // Normalize any accidental double '==' separators
+    size_t doubleEq = 0;
+    while ((doubleEq = cleanDbUrl.find("==", doubleEq)) != std::string::npos) {
+        cleanDbUrl.replace(doubleEq, 2, "=");
     }
 
     if (cleanDbUrl.find("sslmode=") == std::string::npos) {
