@@ -1,4 +1,4 @@
-# Cloudflare Pages Redirects and Security Rules
-# Block static access to backend source code directories
-/Backend/* / 404
-/Api/* / 404
+# Cloudflare Redirects
+# Safely redirect any internal directory requests to home
+/Backend/* / 302
+/Api/* / 302
