@@ -24,3 +24,9 @@ FaarisMart-GitHub-Copy/
 # OS artifacts
 .DS_Store
 Thumbs.db
+node_modules/
+.neon
+.env
+.env.*
+.env.local
+package-lock.json
