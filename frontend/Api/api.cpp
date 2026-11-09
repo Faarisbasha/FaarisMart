@@ -513,12 +513,19 @@ int main() {
         return 1;
     }
 
-    // Strip any surrounding quotes and ensure sslmode=require
+    // Strip any accidental prefix like 'DATABASE_URL=' or 'DATABASE_URL_UNPOOLED='
     std::string cleanDbUrl = databaseUrl;
-    while (!cleanDbUrl.empty() && (cleanDbUrl.front() == '"' || cleanDbUrl.front() == '\'')) {
+    if (cleanDbUrl.rfind("DATABASE_URL_UNPOOLED=", 0) == 0) {
+        cleanDbUrl.erase(0, 22);
+    } else if (cleanDbUrl.rfind("DATABASE_URL=", 0) == 0) {
+        cleanDbUrl.erase(0, 13);
+    }
+
+    // Strip any surrounding quotes or whitespace and ensure sslmode=require
+    while (!cleanDbUrl.empty() && (cleanDbUrl.front() == '"' || cleanDbUrl.front() == '\'' || cleanDbUrl.front() == ' ' || cleanDbUrl.front() == '\t')) {
         cleanDbUrl.erase(0, 1);
     }
-    while (!cleanDbUrl.empty() && (cleanDbUrl.back() == '"' || cleanDbUrl.back() == '\'')) {
+    while (!cleanDbUrl.empty() && (cleanDbUrl.back() == '"' || cleanDbUrl.back() == '\'' || cleanDbUrl.back() == ' ' || cleanDbUrl.back() == '\t' || cleanDbUrl.back() == '\r' || cleanDbUrl.back() == '\n')) {
         cleanDbUrl.pop_back();
     }
 
