@@ -498,18 +498,40 @@ void signalHandler(int signum) {
 // MAIN ENTRY POINT
 // =====================================================================
 int main() {
-    // 1. Validate DATABASE_URL environment variable
-    const char* databaseUrl = std::getenv("DATABASE_URL");
+    // 1. Validate DATABASE_URL (or DATABASE_URL_UNPOOLED) environment variable
+    // Prefer unpooled direct connection for long-running C++ server if available
+    const char* databaseUrl = std::getenv("DATABASE_URL_UNPOOLED");
     if (databaseUrl == nullptr || databaseUrl[0] == '\0') {
-        std::cerr << "[FATAL] DATABASE_URL environment variable is missing or empty.\n"
+        databaseUrl = std::getenv("DATABASE_URL");
+    }
+
+    if (databaseUrl == nullptr || databaseUrl[0] == '\0') {
+        std::cerr << "[FATAL] DATABASE_URL (or DATABASE_URL_UNPOOLED) environment variable is missing or empty.\n"
                   << "[FATAL] The API requires a valid PostgreSQL connection string.\n"
                   << "[FATAL] On Render: Go to Web Service -> Environment -> Add 'DATABASE_URL' "
-                  << "with the Internal Database URL from your 'faarismart-db' PostgreSQL service.\n";
+                  << "with your Neon PostgreSQL connection string.\n";
         return 1;
     }
 
+    // Strip any surrounding quotes and ensure sslmode=require
+    std::string cleanDbUrl = databaseUrl;
+    while (!cleanDbUrl.empty() && (cleanDbUrl.front() == '"' || cleanDbUrl.front() == '\'')) {
+        cleanDbUrl.erase(0, 1);
+    }
+    while (!cleanDbUrl.empty() && (cleanDbUrl.back() == '"' || cleanDbUrl.back() == '\'')) {
+        cleanDbUrl.pop_back();
+    }
+
+    if (cleanDbUrl.find("sslmode=") == std::string::npos) {
+        if (cleanDbUrl.find('?') == std::string::npos) {
+            cleanDbUrl += "?sslmode=require";
+        } else {
+            cleanDbUrl += "&sslmode=require";
+        }
+    }
+
     // 2. Initialize PostgreSQL connection
-    DatabaseManager db(databaseUrl);
+    DatabaseManager db(cleanDbUrl);
     if (!db.init()) {
         std::cerr << "[FATAL] Could not connect to PostgreSQL. Halting startup.\n";
         return 1;
