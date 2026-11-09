@@ -1,4 +1,3 @@
-
 FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -14,6 +13,9 @@ RUN apt-get update && apt-get install -y \
 
 # Set the working directory
 WORKDIR /app
+
+# Bust build cache to compile latest C++ backend updates
+ARG BUILD_REV=20261109_v3
 
 # Copy backend source files, including api.cpp and httplib.h
 COPY frontend/Backend/ ./

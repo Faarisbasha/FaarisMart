@@ -513,21 +513,27 @@ int main() {
         return 1;
     }
 
-    // Strip any accidental prefix like 'DATABASE_URL=' or 'DATABASE_URL_UNPOOLED='
+    // Helper lambda to strip leading/trailing quotes and whitespace
+    auto trimQuotesAndWhitespace = [](std::string& s) {
+        while (!s.empty() && (s.front() == '"' || s.front() == '\'' || s.front() == ' ' || s.front() == '\t' || s.front() == '\r' || s.front() == '\n')) {
+            s.erase(0, 1);
+        }
+        while (!s.empty() && (s.back() == '"' || s.back() == '\'' || s.back() == ' ' || s.back() == '\t' || s.back() == '\r' || s.back() == '\n')) {
+            s.pop_back();
+        }
+    };
+
     std::string cleanDbUrl = databaseUrl;
+    trimQuotesAndWhitespace(cleanDbUrl);
+
+    // Strip any accidental prefix like 'DATABASE_URL=' or 'DATABASE_URL_UNPOOLED='
     if (cleanDbUrl.rfind("DATABASE_URL_UNPOOLED=", 0) == 0) {
         cleanDbUrl.erase(0, 22);
     } else if (cleanDbUrl.rfind("DATABASE_URL=", 0) == 0) {
         cleanDbUrl.erase(0, 13);
     }
 
-    // Strip any surrounding quotes or whitespace
-    while (!cleanDbUrl.empty() && (cleanDbUrl.front() == '"' || cleanDbUrl.front() == '\'' || cleanDbUrl.front() == ' ' || cleanDbUrl.front() == '\t')) {
-        cleanDbUrl.erase(0, 1);
-    }
-    while (!cleanDbUrl.empty() && (cleanDbUrl.back() == '"' || cleanDbUrl.back() == '\'' || cleanDbUrl.back() == ' ' || cleanDbUrl.back() == '\t' || cleanDbUrl.back() == '\r' || cleanDbUrl.back() == '\n')) {
-        cleanDbUrl.pop_back();
-    }
+    trimQuotesAndWhitespace(cleanDbUrl);
 
     // Normalize query string: replace any accidental multiple '?' with '&'
     size_t firstQuestion = cleanDbUrl.find('?');
